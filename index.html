@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestão de Capital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBEFE6;--paper:#FFFAF5;--ink:#1C1A1A;--muted:#6E6660;--line:#E7DACB;
+  --coral:#F2685B;--purple:#9F86EA;--teal:#3FC5B2;--yellow:#FFDD5C;--blue:#45A6DA;--orange:#F5A25D;--pink:#F8C3BC;--cream:#EFE4D6;
+  --pos:#178A68;--neg:#D23F32;
+  --b:2.5px solid var(--ink);--sh:5px 5px 0 var(--ink);--sh-s:3px 3px 0 var(--ink);--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg)}
+body{font-family:'Space Grotesk',system-ui,sans-serif;color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:15px}
+body::before{content:"";position:fixed;inset:0;background-image:radial-gradient(var(--ink) 1px,transparent 1px);background-size:22px 22px;opacity:.07;pointer-events:none;z-index:0}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px;position:relative;z-index:1}
+.num,.mono{font-variant-numeric:tabular-nums}
+.mono{font-family:'Space Mono',monospace}
+button{font-family:inherit;color:inherit}
+input,select,textarea{font:500 15px 'Space Grotesk';color:var(--ink);background:#fff;border:var(--b);border-radius:10px;padding:10px 12px;width:100%;outline:none;box-shadow:2px 2px 0 var(--ink)}
+input:focus,select:focus,textarea:focus{background:#FFFBE6;box-shadow:3px 3px 0 var(--ink)}
+label{display:block;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.field{margin-bottom:14px}
+.hint{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
+
+/* Cards e botões */
+.card{background:var(--paper);border:var(--b);border-radius:var(--r);box-shadow:var(--sh);position:relative}
+.pad{padding:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:700 14px 'Space Grotesk';background:var(--paper);color:var(--ink);border:var(--b);border-radius:10px;box-shadow:var(--sh-s);padding:9px 14px;cursor:pointer;transition:transform .08s,box-shadow .08s;text-decoration:none;white-space:nowrap}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn.icon{padding:7px}
+.bg-coral{background:var(--coral)!important}.bg-purple{background:var(--purple)!important}.bg-teal{background:var(--teal)!important}
+.bg-yellow{background:var(--yellow)!important}.bg-blue{background:var(--blue)!important}.bg-orange{background:var(--orange)!important}
+.bg-pink{background:var(--pink)!important}.bg-cream{background:var(--cream)!important}.bg-paper{background:var(--paper)!important}.bg-ink{background:var(--ink)!important;color:#fff}
+.ic{display:inline-flex}.ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;display:block}
+.ic.lg svg{width:26px;height:26px}
+.ic.fill svg{fill:currentColor;stroke-width:1.5}
+.chip{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);border-radius:999px;padding:3px 10px;font-weight:700;font-size:12px;background:var(--paper);white-space:nowrap}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.muted{color:var(--muted)}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrapr{flex-wrap:wrap}
+.grid{display:grid;gap:18px}
+h3.sec{font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+h3.sec::after{content:"";flex:1;height:2.5px;background:var(--ink);border-radius:2px}
+
+/* Topo */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:52px;height:52px;border:var(--b);border-radius:12px;background:var(--coral);box-shadow:var(--sh-s);display:grid;place-items:center;transform:rotate(-4deg)}
+.logo svg{width:28px;height:28px;fill:var(--ink)}
+.brand h1{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.brand p{color:var(--muted);font-size:13px;font-weight:500;margin-top:4px}
+.top-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seg{display:inline-flex;border:var(--b);border-radius:10px;overflow:hidden;box-shadow:var(--sh-s);background:var(--paper)}
+.seg button{border:0;background:transparent;padding:8px 12px;font-weight:700;cursor:pointer;font-size:14px}
+.seg button+button{border-left:2.5px solid var(--ink)}
+.seg button.on{background:var(--yellow)}
+.save{font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.save i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink);background:var(--teal)}
+.save.busy i{background:var(--yellow);animation:pulse .8s infinite}
+.save.err i{background:var(--coral)}
+@keyframes pulse{50%{transform:scale(.6)}}
+
+/* Hero progresso */
+.hero{padding:22px 22px 18px;overflow:hidden}
+.hero-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.kicker{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--ink);color:var(--yellow);padding:5px 10px;border-radius:6px}
+.kicker svg{width:14px;height:14px;fill:var(--yellow)}
+.hero h2{font-size:22px;margin-top:10px;letter-spacing:-.01em}
+.modes{display:flex;gap:8px;flex-wrap:wrap}
+.modes .btn.on{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+.hero-nums{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:18px 0 14px}
+.hero-big{font-size:clamp(34px,6vw,58px);font-weight:700;letter-spacing:-.03em;line-height:.95}
+.hero-of{font-size:15px;color:var(--muted);font-weight:500;padding-bottom:6px}
+.hero-of b{color:var(--ink)}
+.hero-pct{margin-left:auto;font-family:'Space Mono',monospace;font-size:clamp(28px,4.5vw,44px);background:var(--yellow);border:var(--b);border-radius:12px;padding:4px 14px;box-shadow:var(--sh-s);transform:rotate(2deg)}
+.bar{position:relative;height:46px;border:var(--b);border-radius:14px;background:var(--paper);box-shadow:var(--sh-s);overflow:visible}
+.bar .fill{position:absolute;left:0;top:0;bottom:0;width:0;border-right:var(--b);border-radius:11px 0 0 11px;
+  background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,.28) 0 12px,transparent 12px 24px);background-size:34px 34px;animation:stripes 1.2s linear infinite;transition:width 1.6s cubic-bezier(.2,.9,.2,1)}
+.bar .fill.full{border-radius:11px;border-right:0}
+@keyframes stripes{to{background-position:34px 0}}
+.bar .runner{position:absolute;top:50%;width:38px;height:38px;margin:-19px 0 0 -19px;border:var(--b);border-radius:50%;background:var(--yellow);display:grid;place-items:center;box-shadow:2px 2px 0 var(--ink);transition:left 1.6s cubic-bezier(.2,.9,.2,1);z-index:3;animation:bob 1.6s ease-in-out infinite}
+.bar .runner svg{width:20px;height:20px;fill:var(--ink)}
+@keyframes bob{50%{transform:translateY(-3px) rotate(12deg)}}
+.marks{position:relative;height:30px;margin-top:6px}
+.mk{position:absolute;transform:translateX(-50%);font-size:11px;font-weight:700;text-align:center;top:0}
+.mk i{display:block;width:2.5px;height:8px;background:var(--ink);margin:0 auto 2px}
+.mk.hit{color:var(--pos)}
+.mk.hit b{background:var(--teal);border:2px solid var(--ink);border-radius:6px;padding:0 4px;color:var(--ink)}
+.bar .tick{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed rgba(28,26,26,.35);z-index:2}
+.hero-msg{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700;font-size:16px;margin-top:6px}
+.hero-msg .chip{font-size:13px}
+.minis{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.mini{border:var(--b);border-radius:12px;padding:10px 12px;background:var(--paper);cursor:pointer;transition:transform .1s}
+.mini:hover{transform:translate(-1px,-1px)}
+.mini .t{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px}
+.mini .mb{height:14px;border:2px solid var(--ink);border-radius:8px;overflow:hidden;background:#fff}
+.mini .mb i{display:block;height:100%;border-right:2px solid var(--ink);transition:width 1.2s}
+.deco{position:absolute;border:2px solid var(--ink);pointer-events:none}
+
+/* Abas */
+.tabs{display:flex;gap:10px;margin:24px 0 20px;overflow-x:auto;padding:2px 6px 8px 2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;border:var(--b);border-radius:10px;padding:9px 14px;background:var(--paper);box-shadow:var(--sh-s);cursor:pointer;white-space:nowrap;transition:transform .08s}
+.tab.on{background:var(--ink);color:var(--paper);transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+
+/* Stats */
+.g-dash{grid-template-columns:repeat(4,1fr)}
+.stat{padding:16px 18px;min-height:132px;display:flex;flex-direction:column;cursor:default}
+.stat .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.stat .lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.stat .ibx{width:34px;height:34px;border:2px solid var(--ink);border-radius:9px;display:grid;place-items:center;background:var(--paper)}
+.stat .v{font-size:26px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.stat .s{font-size:14px;font-weight:600;margin-top:4px;opacity:.85}
+.stat .d{font-size:12px;margin-top:auto;padding-top:10px;color:rgba(28,26,26,.72);font-weight:500;line-height:1.35}
+.span2{grid-column:span 2}
+.click{cursor:pointer}
+.click:hover{transform:translate(-1px,-1px);box-shadow:6px 6px 0 var(--ink)}
+.compo{height:34px;border:var(--b);border-radius:10px;overflow:hidden;display:flex;box-shadow:var(--sh-s);background:#fff}
+.compo i{height:100%;border-right:2.5px solid var(--ink)}
+.compo i:last-child{border-right:0}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:13px;font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border:2px solid var(--ink);border-radius:4px}
+.list{display:flex;flex-direction:column}
+.li{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:2px dashed var(--line)}
+.li:last-child{border-bottom:0}
+.li .dt{font-size:12px;font-weight:700;min-width:62px;text-align:center;border:2px solid var(--ink);border-radius:8px;padding:4px 6px;background:var(--paper);line-height:1.15}
+.li .dt b{display:block;font-size:17px}
+.li .main{flex:1;min-width:0}
+.li .main .t{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li .main .m{font-size:12px;color:var(--muted);margin-top:2px}
+.li .val{font-weight:700;white-space:nowrap}
+.empty{padding:24px;text-align:center;color:var(--muted);font-weight:600;border:2px dashed var(--muted);border-radius:12px}
+
+/* Calendário */
+.cal-wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:start}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-head h2{font-size:22px;text-transform:capitalize}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.wk span{text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{aspect-ratio:1/1;border:2px solid var(--ink);border-radius:10px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;padding:6px;position:relative;min-height:52px;transition:transform .08s}
+.day:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--ink)}
+.day.blank{background:transparent;border:2px dashed var(--line);cursor:default}
+.day.blank:hover{transform:none;box-shadow:none}
+.day .dn{font-weight:700;font-size:14px}
+.day .dv{font-size:10.5px;font-weight:700;line-height:1}
+.day.today{background:var(--yellow)}
+.day.sel{background:var(--ink);color:#fff}
+.day.sel .dv.pos{color:#7FF0CF}.day.sel .dv.neg{color:#FFB3AB}
+.day .dots{position:absolute;top:6px;right:6px;display:flex;gap:3px}
+.day .dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink)}
+.msum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.msum div{border:2px solid var(--ink);border-radius:10px;padding:10px;background:var(--paper)}
+.msum small{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.msum b{font-size:15px}
+
+/* Imóveis */
+.g-im{grid-template-columns:repeat(3,1fr)}
+.im{overflow:hidden;cursor:pointer;transition:transform .1s,box-shadow .1s;display:flex;flex-direction:column}
+.im:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.im .top-s{padding:14px 16px;border-bottom:var(--b);display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.im .top-s h4{font-size:18px;line-height:1.15}
+.im .top-s small{font-size:12px;font-weight:700;opacity:.8}
+.im .body{padding:14px 16px;flex:1;display:flex;flex-direction:column;gap:10px}
+.im .bv{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.kv{display:flex;justify-content:space-between;font-size:13px;gap:10px}
+.kv span{color:var(--muted);font-weight:600}
+.kv b{text-align:right}
+.pbar{height:12px;border:2px solid var(--ink);border-radius:7px;overflow:hidden;background:#fff}
+.pbar i{display:block;height:100%;border-right:2px solid var(--ink)}
+.add-card{border:2.5px dashed var(--ink);border-radius:var(--r);display:grid;place-items:center;min-height:220px;cursor:pointer;font-weight:700;background:rgba(255,255,255,.35);gap:8px;text-align:center}
+.add-card:hover{background:var(--paper)}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(28,26,26,.55);display:flex;align-items:flex-start;justify-content:center;padding:40px 14px;z-index:50;overflow-y:auto}
+.modal.hidden{display:none}
+.mbox{width:100%;max-width:560px;animation:pop .22s cubic-bezier(.2,1.4,.4,1)}
+.mbox.wide{max-width:820px}
+@keyframes pop{from{transform:scale(.92) translateY(10px);opacity:0}}
+.mhead{padding:16px 18px;border-bottom:var(--b);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-radius:11px 11px 0 0}
+.mhead h3{font-size:21px;line-height:1.15}
+.mbody{padding:18px}
+.mfoot{padding:14px 18px;border-top:var(--b);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{border:2px solid var(--ink);border-radius:10px;padding:12px;background:var(--paper)}
+.tile small{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;opacity:.85}
+.tile b{font-size:18px;letter-spacing:-.01em}
+.tile em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:3px}
+.addr{display:flex;align-items:center;gap:12px;border:2px solid var(--ink);border-radius:12px;padding:12px;background:#fff;margin-bottom:16px}
+.addr .t{flex:1;font-weight:600;line-height:1.35}
+.mapbtn{width:46px;height:46px;border:var(--b);border-radius:12px;background:var(--teal);display:grid;place-items:center;box-shadow:var(--sh-s);color:var(--ink);flex-shrink:0;transition:transform .08s}
+.mapbtn:hover{transform:translate(-1px,-1px) rotate(-6deg)}
+.ret{border:var(--b);border-radius:12px;padding:14px;background:var(--yellow);margin:16px 0;box-shadow:var(--sh-s)}
+.ret input[type=range]{width:100%;padding:0;border:0;box-shadow:none;background:transparent;accent-color:var(--ink)}
+.tag{font-size:11px;font-weight:700;border:2px solid var(--ink);border-radius:6px;padding:1px 6px;background:var(--paper)}
+
+/* Wallet */
+.g-wal{grid-template-columns:1.3fr 1fr}
+.fx{padding:22px;background:var(--teal)}
+.fx .big{font-size:clamp(40px,7vw,64px);font-weight:700;letter-spacing:-.03em;line-height:1}
+.spark{width:100%;height:90px;margin-top:14px;border:2px solid var(--ink);border-radius:10px;background:var(--paper)}
+.conv{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end;margin-top:16px}
+.conv .eq{font-weight:700;font-size:22px;padding-bottom:8px}
+.g-ct{grid-template-columns:repeat(3,1fr)}
+
+/* Toast e confetti */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;border:var(--b);border-radius:12px;padding:12px 18px;font-weight:700;box-shadow:5px 5px 0 var(--yellow);z-index:80;animation:pop .2s}
+.cf{position:fixed;top:-20px;width:12px;height:16px;border:2px solid var(--ink);z-index:90;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+.click-bar{cursor:pointer}
+.bar.click-bar:hover{box-shadow:5px 5px 0 var(--ink);transform:translate(-1px,-1px)}
+.bd-group{border:var(--b);border-radius:12px;overflow:hidden;margin-bottom:14px;background:#fff}
+.bd-h{padding:9px 14px;font-weight:700;border-bottom:var(--b);display:flex;align-items:center;gap:8px}
+.bd-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 14px;border-bottom:2px dashed var(--line)}
+.bd-row:last-child{border-bottom:0}
+.bd-l small{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-top:2px}
+.bd-v{font-weight:700;white-space:nowrap}
+.bd-sub{background:var(--cream)}
+.bd-total{border:var(--b);border-radius:12px;padding:6px 4px 12px;background:var(--yellow);box-shadow:var(--sh-s)}
+.bd-total .bd-row{border-bottom:2px dashed rgba(28,26,26,.25);padding:8px 10px}
+.bd-total .bd-row:first-child .bd-v{font-size:22px}
+.bd-total .pbar,.bd-total>div:last-child{margin-left:10px;margin-right:10px}
+.stat{background:var(--paper);padding-left:26px;min-height:116px}
+.stat .strip,.acct .strip{position:absolute;left:0;top:0;bottom:0;width:10px;border-right:var(--b);border-radius:11px 0 0 11px}
+.acct{padding-left:28px}
+.stat .v{font-size:30px}
+.info{width:22px;height:22px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);font:700 12px 'Space Grotesk';cursor:pointer;line-height:1}
+.info:hover{background:var(--yellow)}
+.more{margin-top:16px}
+.more summary{list-style:none;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;padding:6px 2px}
+.more summary::-webkit-details-marker{display:none}
+.more summary .ic{transition:transform .2s}
+.more[open] summary .ic{transform:rotate(90deg)}
+.g-more{grid-template-columns:repeat(3,1fr);margin-top:10px}
+.mk-end{left:auto!important;right:0;transform:none;text-align:right}
+.mk-end i{margin:0 0 2px auto}
+.linkbtn{border:0;background:none;font:700 14px 'Space Grotesk';cursor:pointer;display:inline-flex;align-items:center;gap:2px;margin-left:auto;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+.linkbtn .ic svg{width:15px;height:15px}
+.dot-l::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;border:2px solid var(--ink);margin-right:6px;vertical-align:-1px}
+.dot-l.teal::before{background:var(--teal)}.dot-l.coral::before{background:var(--coral)}.dot-l.purple::before{background:var(--purple)}
+.hero-big{font-size:clamp(40px,7vw,68px)}
+.story{font-size:clamp(16px,2.2vw,19px);font-weight:500;line-height:1.45;margin-bottom:16px;padding-bottom:14px;border-bottom:2px dashed var(--line)}
+.story b{background:var(--yellow);border:2px solid var(--ink);border-radius:6px;padding:0 5px;font-weight:700;white-space:nowrap}
+body.simple #tabs{display:none}
+body.simple main{margin-top:22px}
+.g-simple{grid-template-columns:repeat(3,1fr)}
+.big-tile{padding:22px 22px 22px 32px}
+.big-tile small{display:block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.big-tile b{font-size:clamp(30px,4vw,44px);letter-spacing:-.03em;line-height:1}
+.big-tile .strip{position:absolute;left:0;top:0;bottom:0;width:12px;border-right:var(--b);border-radius:11px 0 0 11px}
+.forecast{display:flex;align-items:center;gap:16px;padding:16px 18px;margin-top:18px;flex-wrap:wrap}
+.fc-ic{width:56px;height:56px;border:var(--b);border-radius:14px;display:grid;place-items:center;box-shadow:var(--sh-s);transform:rotate(-4deg);flex-shrink:0}
+.fc-t{flex:1;min-width:200px}
+.fc-t small{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.fc-t b{display:block;font-size:24px;letter-spacing:-.02em;text-transform:capitalize;margin:2px 0}
+.fc-t span{font-size:13px;color:var(--muted);font-weight:500}
+.g-ach{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.ach{background:var(--paper);border:var(--b);border-radius:12px;box-shadow:var(--sh-s);padding:14px;display:flex;flex-direction:column;gap:4px}
+.ach-ic{width:46px;height:46px;border:var(--b);border-radius:50%;display:grid;place-items:center;margin-bottom:6px}
+.ach b{font-size:15px}
+.ach small{font-size:12px;color:var(--muted);line-height:1.35}
+.ach em{font-style:normal;font-size:11px;font-weight:700;margin-top:4px}
+.ach.locked{opacity:.5;box-shadow:none;border-style:dashed}
+.his-head{display:flex;align-items:center;gap:18px;padding:20px;flex-wrap:wrap}
+.his-head h2{font-size:26px;letter-spacing:-.02em}
+.his-head p{color:var(--muted);font-weight:500;margin-top:4px}
+.his-heart{width:64px;height:64px;border:var(--b);border-radius:16px;display:grid;place-items:center;box-shadow:var(--sh-s);transform:rotate(-6deg);flex-shrink:0}
+.tl{position:relative;padding-left:46px}
+.tl::before{content:"";position:absolute;left:19px;top:6px;bottom:6px;width:3px;background:var(--ink);border-radius:2px}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-46px;top:10px;width:40px;height:40px;border:var(--b);border-radius:50%;display:grid;place-items:center;z-index:1}
+.tl-card{overflow:hidden;display:flex;flex-wrap:wrap}
+.tl-img{width:180px;min-height:120px;background:center/cover no-repeat;border-right:var(--b);flex-shrink:0}
+.tl-body{padding:14px 16px;flex:1;min-width:200px}
+.tl-body small{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.tl-body b{font-size:17px}
+.tl-body p{margin-top:4px;line-height:1.45;color:#3a3532}
+.im-photo{height:150px;background:center/cover no-repeat;border-bottom:var(--b)}
+.im-banner{height:210px;background:center/cover no-repeat;border:var(--b);border-radius:12px;margin-bottom:16px}
+.photo-pick{display:flex;gap:14px;align-items:center}
+.photo-prev{width:96px;height:96px;border:var(--b);border-radius:12px;background:#fff center/cover no-repeat;display:grid;place-items:center;flex-shrink:0;color:var(--muted)}
+.resumo{border:var(--b);border-radius:16px;background:var(--paper);padding:22px;box-shadow:var(--sh);text-align:center;position:relative;overflow:hidden}
+.resumo .kicker{text-transform:uppercase}
+.r-big{font-size:clamp(40px,8vw,56px);font-weight:700;letter-spacing:-.03em;margin-top:14px;line-height:1}
+.r-sub{font-weight:600;color:var(--muted);margin-top:4px}
+.r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.r-tile{border:2px solid var(--ink);border-radius:10px;padding:10px;background:#fff}
+.r-tile small{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.r-tile b{font-size:15px;text-transform:capitalize}
+.r-ach{margin-top:14px;font-weight:700;background:var(--yellow);border:2px solid var(--ink);border-radius:10px;padding:8px}
+.r-love{margin-top:16px;font-weight:700}
+.seg-sm button{padding:6px 10px;font-size:13px}
+.click-li{cursor:pointer;border-radius:8px}
+.click-li:hover{background:var(--cream)}
+.g-rec{grid-template-columns:1fr 1fr;margin-bottom:18px}
+.proj{padding:18px 20px;margin-bottom:22px}
+.proj-h{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.proj-h .ibx{width:40px;height:40px;border:2px solid var(--ink);border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.proj-h small{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.proj-h .muted{font-size:13px;font-weight:500}
+.proj-rows .kv{padding:9px 0;border-bottom:2px dashed var(--line);font-size:14px}
+.proj-total{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px;background:var(--yellow);border:var(--b);border-radius:12px;padding:12px 16px;box-shadow:var(--sh-s)}
+.proj-total span{font-weight:700}
+.proj-total b{font-size:26px;letter-spacing:-.02em;display:block;line-height:1.1}
+.proj-total small{font-size:13px;font-weight:600;opacity:.75}
+.sob-hero{display:flex;align-items:center;gap:18px;padding:22px;margin-bottom:18px;flex-wrap:wrap}
+.sob-logo{width:64px;height:64px;flex-shrink:0}
+.sob-logo svg{width:32px;height:32px}
+.sob-hero small{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.sob-hero h2{font-size:28px;letter-spacing:-.02em;margin-top:2px}
+.sob-hero p{font-weight:600;color:var(--muted);margin-top:2px}
+.sob-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.sob-kv{padding:9px 0;border-bottom:2px dashed var(--line)}
+.sob-kv:last-child{border-bottom:0}
+.sob-txt p{line-height:1.55;margin-bottom:10px}
+.sob-txt p:last-child{margin-bottom:0}
+.foot{margin-top:44px;padding:18px 20px;background:var(--paper);border:var(--b);border-radius:var(--r);box-shadow:var(--sh);text-align:center;font-size:13px;font-weight:600;color:var(--ink);line-height:1.6}
+.foot p+p{color:var(--muted);font-weight:500}
+
+@media (max-width:980px){
+  .g-dash{grid-template-columns:repeat(2,1fr)}
+  .g-im,.g-ct,.g-more{grid-template-columns:repeat(2,1fr)}
+  .g-simple,.g-rec{grid-template-columns:1fr}
+  .cal-wrap,.g-wal{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .wrap{padding:16px 14px 40px}
+  .g-dash,.g-im,.g-ct,.g-more,.g2{grid-template-columns:1fr}
+  .minis{grid-template-columns:1fr 1fr}
+  .tl-img{width:100%;border-right:0;border-bottom:var(--b)}
+  .r-grid{grid-template-columns:1fr}
+  .top-r{width:100%}
+  .g3,.msum{grid-template-columns:1fr 1fr}
+  .span2{grid-column:span 1}
+  .hero{padding:18px 16px 16px}
+  .hero-pct{margin-left:0}
+  .day{min-height:40px;padding:4px}
+  .day .dv{display:none}
+  .brand h1{font-size:22px}
+}
+</style>
+<script>
+window.addEventListener('error', function(e){
+  var m = 'Erro ao iniciar: ' + (e.message || 'desconhecido') + (e.lineno ? ' (linha ' + e.lineno + ', coluna ' + e.colno + ')' : '');
+  var show = function(){
+    var d = document.getElementById('bootErr'); if (!d || window.__fatalShown) return;
+    var trecho = '';
+    try {
+      var src = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+      var linhas = src.split('\n'), n = e.lineno || 0;
+      for (var i = Math.max(1, n - 2); i <= Math.min(linhas.length, n + 1); i++) trecho += i + '  ' + linhas[i-1].slice(0, 220) + '\n';
+    } catch(x) {}
+    d.style.display = 'block'; d.style.whiteSpace = 'pre-wrap';
+    d.textContent = m + '. Tire um print e envie.\n\n' + trecho;
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', show); else show();
+});
+</script>
+</head>
+<body>
+<div class="wrap">
+  <div id="bootErr" style="display:none;background:#F8C3BC;border:2.5px solid #1C1A1A;border-radius:12px;padding:14px;margin-bottom:16px;font:600 14px monospace"></div>
+  <header class="top">
+    <div class="brand">
+      <div class="logo" id="logo"></div>
+      <div><h1>Gestão de Capital</h1><p>Patrimônio pessoal em tempo real</p></div>
+    </div>
+    <div class="top-r">
+      <span class="chip bg-teal num" id="ratePill">US$ 1 · carregando</span>
+      <div class="seg" id="viewSeg">
+        <button data-v="BRL" onclick="setView('BRL')">R$</button>
+        <button data-v="USD" onclick="setView('USD')">US$</button>
+      </div>
+      <button class="btn sm icon" id="btnPriv" onclick="togglePriv()" title="Esconder valores"></button>
+      <button class="btn sm" id="btnSimple" onclick="toggleSimple()"></button>
+      <span class="save" id="saveState"><i></i>Pronto</span>
+    </div>
+  </header>
+
+  <section class="card hero" id="hero"></section>
+  <nav class="tabs" id="tabs"></nav>
+  <main id="view"></main>
+
+  <footer class="foot">
+    <p>© 2026 Andrey Marques. All rights reserved.</p>
+    <p>For personal financial management and record-keeping purposes only.</p>
+  </footer>
+</div>
+
+<div class="modal hidden" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="mbox card" id="mbox"></div>
+</div>
+
+<script>
+/* ================== CONFIG ================== */
+const VERSION = 'v1.7.2';
+const LAST_UPDATE = 'Outubro 2026';
+/* ================== SERVIDOR ================== */
+/* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
+   Vazio: dentro do Apps Script usa a planilha direto, fora dele salva só neste navegador. */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyZHYbLRRJwGtA_98QP38yjlmksNurA2TLesjawllkfrakcDfdSjwMIOsF40DVFsmQL/exec';
+if (typeof google === 'undefined' && API_URL) {
+  window.google = { script: { get run(){
+    const r = { ok:null, fail:null,
+      withSuccessHandler(f){ r.ok = f; return r; },
+      withFailureHandler(f){ r.fail = f; return r; } };
+    ['loadData','saveData','getMarket','uploadFoto'].forEach(fn => {
+      r[fn] = (...args) => {
+        fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, args }) })
+          .then(res => res.json())
+          .then(j => { if (j.ok) { if (r.ok) r.ok(j.data); } else if (r.fail) r.fail(new Error(j.error)); })
+          .catch(e => { if (r.fail) r.fail(e); });
+      };
+    });
+    return r;
+  } } };
+}
+const GAS = (typeof google !== 'undefined' && google.script && google.script.run) ? true : false;
+const COLORS = ['coral','purple','teal','yellow','blue','orange','pink'];
+const MONTHS = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const MON = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+
+const IC = {
+  spark:'<svg viewBox="0 0 24 24"><path d="M12 1.5l2.6 7.4 7.4 2.6-7.4 2.6L12 21.5l-2.6-7.4L2 11.5l7.4-2.6z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z"/><circle cx="12" cy="9.5" r="2.6"/></svg>',
+  edit:'<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>',
+  plus:'<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  trash:'<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
+  left:'<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
+  right:'<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
+  close:'<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+  chart:'<svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  wallet:'<svg viewBox="0 0 24 24"><path d="M3 7h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 7l3-3h11v3"/><circle cx="16.5" cy="13.5" r="1.4"/></svg>',
+  gift:'<svg viewBox="0 0 24 24"><path d="M4 11h16v10H4zM2 7h20v4H2zM12 7v14"/><path d="M12 7c-2-4-6-3-5 0M12 7c2-4 6-3 5 0"/></svg>',
+  cog:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  dollar:'<svg viewBox="0 0 24 24"><path d="M12 2v20M17 6.5c-1-1.5-3-2-5-2-2.5 0-4.5 1.3-4.5 3.5 0 5 9.5 2.5 9.5 7.5 0 2.2-2 3.5-5 3.5-2 0-4-.7-5-2.3"/></svg>',
+  trend:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  eye:'<svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  refresh:'<svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>',
+  target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
+  heart:'<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.6-9 9-9 9z"/></svg>',
+  trophy:'<svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 20h8M9 17h6"/></svg>',
+  lock:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+  camera:'<svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+  share:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>',
+  eyeoff:'<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.8-1.3"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+  coin:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>'
+};
+const ic = (n, cls='') => `<span class="ic ${cls}">${IC[n]}</span>`;
+
+/* ================== DADOS PADRÃO ================== */
+const DEFAULT = {
+  v: 1,
+  settings: {
+    goals: { liquido: 500000, patrimonio: 500000, total: 1000000 },
+    goalCurrency: 'BRL', view: 'BRL', barMode: 'total', cdiManual: null, marcos: {}
+  },
+  contas: [
+    { id:'c_usd', nome:'Saldo em Dólar', moeda:'USD', saldoInicial:0, cdi:0,   cor:'teal' },
+    { id:'c_brl', nome:'Saldo em Real',  moeda:'BRL', saldoInicial:0, cdi:100, cor:'yellow' }
+  ],
+  imoveis: [],
+  receber: [],
+  lancamentos: [],
+  historia: [],
+  snaps: {}
+};
+
+/* ================== ESTADO ================== */
+let S = null;
+let RATE = 5.40;
+let MARKET = { usd:null, cdi:null, hist:[], live:false };
+let TAB = 'dash';
+const now = new Date();
+let cal = { y: now.getFullYear(), m: now.getMonth(), sel: todayISO() };
+let heroAnimated = false;
+
+/* ================== UTIL ================== */
+const $ = (s, el=document) => el.querySelector(s);
+const clone = o => JSON.parse(JSON.stringify(o));
+const uid = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function pad(n){ return String(n).padStart(2,'0'); }
+function todayISO(){ const d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function fmtDate(iso){ if(!iso) return ''; const [y,m,d]=iso.split('-'); return d+' '+MON[+m-1]+' '+y; }
+function money(v, cur, force){
+  cur = cur || 'BRL';
+  if (!force && S && S.settings.privado) return (cur === 'USD' ? 'US$' : 'R$') + ' •••';
+  const s = new Intl.NumberFormat('pt-BR',{style:'currency',currency:cur,minimumFractionDigits:2,maximumFractionDigits:2}).format(+v||0);
+  return s.replace('-', '−');
+}
+function compact(v, cur, force){
+  const sym = (cur||'BRL')==='USD' ? 'US$ ' : 'R$ ';
+  if (!force && S && S.settings.privado) return sym + '•••';
+  const a = Math.abs(+v||0);
+  let s;
+  if (a >= 1e6) s = (a/1e6).toLocaleString('pt-BR',{maximumFractionDigits:2}) + ' mi';
+  else if (a >= 1e3) s = (a/1e3).toLocaleString('pt-BR',{maximumFractionDigits:1}) + ' mil';
+  else s = a.toLocaleString('pt-BR',{maximumFractionDigits:0});
+  return (v<0?'−':'') + sym + s;
+}
+function pctFmt(p, d=1){ return (+p||0).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}) + '%'; }
+function parseNum(s){
+  if (typeof s === 'number') return s;
+  s = String(s||'').trim().replace('−','-').replace(/[^\d,.\-]/g,'');
+  if (s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
+  else if (/^-?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,'');
+  const n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+const fmtIn = n => (n || n === 0) && +n !== 0 ? (+n).toLocaleString('pt-BR',{maximumFractionDigits:2}) : '';
+function conv(v, from, to, rate){
+  rate = rate || RATE;
+  if (from === to) return v;
+  return from === 'USD' ? v * rate : v / rate;
+}
+function cdiAA(){ return (S && S.settings.cdiManual) ? +S.settings.cdiManual : (MARKET.cdi && MARKET.cdi.aa) ? MARKET.cdi.aa : 14.9; }
+function toast(msg){
+  const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t); setTimeout(()=>t.remove(), 2600);
+}
+function confetti(n=90){
+  for (let i=0;i<n;i++){
+    const c = document.createElement('i'); c.className='cf';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = 'var(--'+COLORS[i%COLORS.length]+')';
+    c.style.animationDuration = (2+Math.random()*2.2)+'s';
+    c.style.animationDelay = (Math.random()*.6)+'s';
+    c.style.borderRadius = Math.random()>.5 ? '50%' : '3px';
+    document.body.appendChild(c); setTimeout(()=>c.remove(), 5200);
+  }
+}
+
+/* ================== CÁLCULOS ================== */
+const contaById = id => S.contas.find(c => c.id === id);
+const contaMoeda = l => { const c = contaById(l.contaId); return c ? c.moeda : 'BRL'; };
+function contaSaldo(c){
+  if (c.dataConfirmado)
+    return (+c.saldoConfirmado||0) + S.lancamentos.filter(l => l.contaId === c.id && l.data > c.dataConfirmado).reduce((a,l) => a + (+l.valor||0), 0);
+  return (+c.saldoInicial||0) + S.lancamentos.filter(l => l.contaId === c.id).reduce((a,l) => a + (+l.valor||0), 0);
+}
+/* Lançamento com data até o saldo confirmado já está refletido no banco */
+function lancHistorico(l){ const c = contaById(l.contaId); return !!(c && c.dataConfirmado && l.data <= c.dataConfirmado); }
+function depoisConfirmado(c){ return S.lancamentos.filter(l => l.contaId === c.id && c.dataConfirmado && l.data > c.dataConfirmado).length; }
+function editValorAtual(id){
+  const c = S.contas.find(x => x.id === id);
+  openModal(`
+    <div class="mhead bg-${c.cor||'yellow'}"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">${esc(c.nome)}</small><h3>Editar valor atual</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Saldo no banco (${c.moeda})</label><input id="va_val" inputmode="decimal" value="${fmtIn(contaSaldo(c))}"></div>
+        <div class="field"><label>Conferido em</label><input id="va_data" type="date" value="${todayISO()}"></div>
+      </div>
+      <div class="hint">Digite exatamente o que aparece no app do banco. Lançamentos com data até esse dia ficam só no histórico, nos imóveis e no calendário, sem descontar de novo. Lançamentos de datas seguintes mexem no saldo normalmente.</div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn bg-teal" onclick="saveValorAtual('${c.id}')">Confirmar saldo</button></div>`);
+  setTimeout(() => { const i = $('#va_val'); i.focus(); i.select(); }, 60);
+}
+function saveValorAtual(id){
+  const c = S.contas.find(x => x.id === id);
+  c.saldoConfirmado = parseNum($('#va_val').value);
+  c.dataConfirmado = $('#va_data').value || todayISO();
+  closeModal(); commit(); toast('Saldo confirmado em ' + fmtDate(c.dataConfirmado));
+}
+function lancAbsEm(l, cur){ return conv(Math.abs(+l.valor||0), contaMoeda(l), cur, l.cotacao || RATE); }
+function lancBRL(l){ return conv(+l.valor||0, contaMoeda(l), 'BRL', l.cotacao || RATE); }
+
+function calcImovel(im){
+  const pays = S.lancamentos.filter(l => l.imovelId === im.id).sort((a,b) => a.data < b.data ? -1 : 1);
+  const pagoSis = pays.reduce((a,l) => a + lancAbsEm(l, im.moeda), 0);
+  const investido = (+im.entrada||0) + (+im.pagoAntes||0) + pagoSis;
+  const parcelasPagas = (+im.parcelasPagasBase||0) + pays.length;
+  let saldoDev, liquido;
+  if (im.metodo === 'mercado'){
+    saldoDev = Math.max(0, (+im.saldoDevedorBase||0) - pagoSis);
+    liquido = (+im.valorTotal||0) - saldoDev;
+  } else {
+    saldoDev = (+im.valorTotal||0) ? Math.max(0, (+im.valorTotal) - investido) : 0;
+    liquido = investido;
+  }
+  let lucro, venda, retPct;
+  if (im.vendaModo === 'valor' && +im.vendaValor > 0){
+    venda = (+im.vendaValor) - saldoDev;
+    lucro = venda - liquido;
+    retPct = liquido > 0 ? lucro / liquido * 100 : 0;
+  } else {
+    retPct = +im.retorno || 0;
+    lucro = liquido * retPct / 100;
+    venda = liquido + lucro;
+  }
+  const total = +im.parcelasTotal || 0;
+  return { pays, pagoSis, investido, parcelasPagas, saldoDev, liquido, lucro, venda, retPct,
+           restantes: total ? Math.max(0, total - parcelasPagas) : null,
+           pctParcelas: total ? Math.min(100, parcelasPagas/total*100) : null };
+}
+function calcRec(r){
+  const pays = S.lancamentos.filter(l => l.receberId === r.id);
+  const rec = pays.reduce((a,l) => a + lancAbsEm(l, r.moeda||'BRL'), 0);
+  const pend = Math.max(0, (+r.valor||0) - rec);
+  return { pays, rec, pend, pct: +r.valor ? Math.min(100, rec/(+r.valor)*100) : 0, done: pend <= 0.005 };
+}
+function totals(){
+  let usd = 0, brl = 0;
+  S.contas.forEach(c => { if (c.moeda === 'USD') usd += contaSaldo(c); else brl += contaSaldo(c); });
+  const liquidoBRL = brl + usd * RATE;
+  let patrBRL = 0, investBRL = 0, lucroBRL = 0;
+  S.imoveis.forEach(im => {
+    const k = calcImovel(im), m = im.moeda || 'BRL';
+    patrBRL += conv(k.liquido, m, 'BRL'); investBRL += conv(k.investido, m, 'BRL'); lucroBRL += conv(k.lucro, m, 'BRL');
+  });
+  let receberBRL = 0; S.receber.forEach(r => receberBRL += conv(calcRec(r).pend, r.moeda||'BRL', 'BRL'));
+  const totalBRL = liquidoBRL + patrBRL;
+  const mensalTx = Math.pow(1 + cdiAA()/100, 1/12) - 1;
+  let rendBRL = 0, baseCDI = 0;
+  S.contas.forEach(c => {
+    if (c.moeda === 'BRL' && +c.cdi > 0){ const s = Math.max(0, contaSaldo(c)); baseCDI += s; rendBRL += s * mensalTx * (+c.cdi/100); }
+  });
+  return { usd, brl, liquidoBRL, patrBRL, investBRL, lucroBRL, receberBRL, totalBRL, rendBRL, baseCDI,
+           futuroBRL: totalBRL + receberBRL + lucroBRL };
+}
+function fromBRL(v, cur){ return cur === 'USD' ? v / RATE : v; }
+function dual(vBRL){
+  const vw = S.settings.view, ot = vw === 'BRL' ? 'USD' : 'BRL';
+  return { main: compact(fromBRL(vBRL, vw), vw), sub: money(fromBRL(vBRL, ot), ot) };
+}
+
+/* ================== PERSISTÊNCIA ================== */
+let saveTimer = null;
+function setSave(state, txt){ const el = $('#saveState'); el.className = 'save ' + state; el.innerHTML = '<i></i>' + txt; }
+function persist(){
+  setSave('busy','Salvando');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const json = JSON.stringify(S);
+    try { localStorage.setItem('gcp_data', json); } catch(e){}
+    if (GAS){
+      google.script.run
+        .withSuccessHandler(() => setSave('', 'Salvo na planilha'))
+        .withFailureHandler(err => { setSave('err','Erro ao salvar'); toast('Não consegui salvar ' + (err && err.message ? err.message : '')); })
+        .saveData(json);
+    } else setSave('', 'Salvo neste navegador');
+  }, 700);
+}
+function commit(){ persist(); renderAll(); }
+function hydrate(raw){
+  let d = null;
+  try { d = raw ? JSON.parse(raw) : null; } catch(e){ d = null; }
+  if (!d) return clone(DEFAULT);
+  const base = clone(DEFAULT);
+  const out = Object.assign(base, d);
+  out.settings = Object.assign(clone(DEFAULT.settings), d.settings || {});
+  out.settings.goals = Object.assign(clone(DEFAULT.settings.goals), (d.settings||{}).goals || {});
+  out.settings.marcos = out.settings.marcos || {};
+  if (!out.snaps || typeof out.snaps !== 'object' || Array.isArray(out.snaps)) out.snaps = {};
+  ['contas','imoveis','receber','lancamentos','historia'].forEach(k => { if (!Array.isArray(out[k])) out[k] = clone(DEFAULT[k]); });
+  return out;
+}
+function loadAll(){
+  if (GAS){
+    google.script.run
+      .withSuccessHandler(raw => { S = hydrate(raw); renderAll(); })
+      .withFailureHandler(err => loadError(err))
+      .loadData();
+  } else {
+    let raw = null; try { raw = localStorage.getItem('gcp_data'); } catch(e){}
+    S = hydrate(raw); renderAll();
+  }
+}
+
+/* Se a planilha não responder, mostra o motivo e não salva nada por cima dos dados */
+function loadError(err){
+  const msg = err && err.message ? err.message : String(err || 'erro desconhecido');
+  const auth = /autoriza|authoriz|permiss|permission|scope/i.test(msg);
+  $('#logo').innerHTML = IC.spark;
+  $('#hero').innerHTML = `
+    <span class="kicker">${IC.spark} Não consegui abrir a planilha</span>
+    <h2 style="margin-top:12px">${auth ? 'Falta autorizar o script' : 'A planilha não respondeu'}</h2>
+    <p style="margin:10px 0 6px;line-height:1.5">${auth
+      ? 'No editor do Apps Script, selecione a função <b>autorizar</b> e clique em Executar. Aceite as permissões e depois publique uma Nova versão em Gerenciar implantações.'
+      : 'Seus dados estão seguros na planilha, nada foi alterado. Tente recarregar em alguns segundos.'}</p>
+    <p class="hint" style="font-family:monospace">${esc(msg)}</p>
+    <button class="btn bg-yellow" style="margin-top:14px" onclick="location.reload()">${ic('refresh')}Tentar de novo</button>`;
+  $('#view').innerHTML = '';
+  setSave('err', 'Sem conexão com a planilha');
+}
+
+/* ================== MERCADO ================== */
+function applyMarket(m){
+  if (!m) return;
+  MARKET = m;
+  if (m.usd && m.usd.bid) RATE = m.usd.bid;
+  try { localStorage.setItem('gcp_market', JSON.stringify(m)); } catch(e){}
+  if (S) renderAll();
+}
+function loadMarket(force){
+  try { const c = JSON.parse(localStorage.getItem('gcp_market')||'null'); if (c && c.usd){ MARKET = c; RATE = c.usd.bid; MARKET.live = false; } } catch(e){}
+  if (GAS && !force){
+    google.script.run.withSuccessHandler(applyMarket).withFailureHandler(clientMarket).getMarket();
+  } else clientMarket();
+}
+async function clientMarket(){
+  const m = { usd:null, cdi:null, hist:[], at:new Date().toISOString(), live:false };
+  try {
+    const r = (await (await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL')).json()).USDBRL;
+    m.usd = { bid:+r.bid, ask:+r.ask, high:+r.high, low:+r.low, pct:+r.pctChange, date:r.create_date, src:'AwesomeAPI' };
+  } catch(e){}
+  try {
+    const h = await (await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/30')).json();
+    m.hist = h.map(x => ({ t:+x.timestamp, v:+x.bid })).reverse();
+  } catch(e){}
+  try {
+    const d = await (await fetch('https://api.bcb.gov.br/dados/serie/bcdata.sgs.4389/dados/ultimos/1?formato=json')).json();
+    m.cdi = { aa: parseFloat(String(d[0].valor).replace(',','.')), date: d[0].data, src:'BCB CDI' };
+  } catch(e){}
+  m.live = !!m.usd;
+  if (!m.usd && MARKET.usd) m.usd = MARKET.usd;
+  if (!m.cdi && MARKET.cdi) m.cdi = MARKET.cdi;
+  if (!m.hist.length && MARKET.hist) m.hist = MARKET.hist;
+  applyMarket(m);
+}
+
+/* ================== RENDER GERAL ================== */
+function renderAll(){
+  if (!S) return;
+  try { renderTop(); } catch(e){ showFatal(e, 'topo'); }
+  let T;
+  try { T = totals(); } catch(e){ showFatal(e, 'cálculo dos totais'); return; }
+  try { let dirty = snapshot(T); if (checkAch(T)) dirty = true; if (dirty) persist(); } catch(e){ console.warn(e); }
+  try { renderHero(T); } catch(e){ showFatal(e, 'barra de progresso'); }
+  try { renderTabs(); } catch(e){ showFatal(e, 'abas'); }
+  try { $('#view').innerHTML = S.settings.simples ? vSimple(T) : VIEWS[TAB](T); afterView(); } catch(e){ showFatal(e, 'tela ' + TAB); }
+}
+
+/* Mostra qualquer erro na tela em vez de deixar a página em branco */
+function showFatal(err, onde){
+  window.__fatalShown = true;
+  const msg = (err && (err.stack || err.message)) || String(err);
+  const box = document.getElementById('fatal') || (() => { const d = document.createElement('div'); d.id = 'fatal'; d.className = 'card pad bg-pink'; d.style.margin = '0 0 18px'; document.querySelector('.wrap').insertBefore(d, document.getElementById('hero')); return d; })();
+  box.innerHTML = `<b>Algo deu errado${onde ? ' em ' + onde : ''}</b><p class="hint" style="margin:6px 0 8px">Tire um print desta caixa e me envie. Seus dados continuam seguros na planilha.</p>
+    <pre style="white-space:pre-wrap;font-size:12px;background:#fff;border:2px solid var(--ink);border-radius:8px;padding:10px;max-height:220px;overflow:auto">${esc(String(msg).split('\n').slice(0,6).join('\n'))}</pre>
+    <div class="hint">Versão ${VERSION}</div>`;
+}
+window.addEventListener('error', e => showFatal(e.error || e.message, 'script'));
+window.addEventListener('unhandledrejection', e => showFatal(e.reason, 'carregamento'));
+function renderTop(){
+  $('#logo').innerHTML = IC.spark;
+  $('#ratePill').innerHTML = ic('dollar') + ' US$ 1 = ' + money(RATE,'BRL',true);
+  document.querySelectorAll('#viewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === S.settings.view));
+  $('#btnPriv').innerHTML = ic(S.settings.privado ? 'eyeoff' : 'eye');
+  $('#btnPriv').classList.toggle('bg-yellow', !!S.settings.privado);
+  $('#btnSimple').innerHTML = S.settings.simples ? ic('chart') + 'Completo' : ic('spark') + 'Modo simples';
+  $('#btnSimple').classList.toggle('bg-yellow', !S.settings.simples);
+  document.body.classList.toggle('simple', !!S.settings.simples);
+}
+function setView(v){ S.settings.view = v; commit(); }
+
+/* ---------- HERO / PROGRESSO ---------- */
+const MODES = {
+  liquido:    { t:'Liquidez',              full:'Dinheiro Líquido',               c:'teal' },
+  patrimonio: { t:'Patrimônio',            full:'Patrimônio Imobiliário Líquido', c:'purple' },
+  total:      { t:'Total',                 full:'Patrimônio Total',               c:'coral' }
+};
+function modeValue(mode, T){
+  const v = mode === 'liquido' ? T.liquidoBRL : mode === 'patrimonio' ? T.patrBRL : T.totalBRL;
+  return fromBRL(v, S.settings.goalCurrency);
+}
+function tier(p){
+  if (p >= 100) return 'META BATIDA! Hora de sonhar mais alto';
+  if (p >= 90)  return 'Falta muito pouco. Segura firme!';
+  if (p >= 75)  return 'Reta final, a meta já está à vista';
+  if (p >= 50)  return 'Mais da metade conquistada! Agora é acelerar';
+  if (p >= 25)  return 'Ganhando tração rumo à metade';
+  if (p >= 10)  return 'Ritmo forte, cada aporte conta';
+  if (p >= 3)   return 'A base está sendo construída, tijolo por tijolo';
+  return 'Todo grande patrimônio começa assim. Primeiro passo dado!';
+}
+function renderHero(T){
+  const simple = !!S.settings.simples;
+  const mode = simple ? 'total' : S.settings.barMode, gc = S.settings.goalCurrency, M = MODES[mode];
+  const v = modeValue(mode, T), g = +S.settings.goals[mode] || 1;
+  const p = Math.max(0, v / g * 100), w = Math.min(100, p);
+  const falta = g - v;
+
+  // marcos e confete
+  let celebrate = false;
+  Object.keys(MODES).forEach(k => {
+    const pk = modeValue(k, T) / (+S.settings.goals[k]||1) * 100;
+    const step = Math.min(100, Math.floor(pk/25)*25);
+    const prev = S.settings.marcos[k];
+    if (prev === undefined){ S.settings.marcos[k] = step; }
+    else if (step > prev){ S.settings.marcos[k] = step; celebrate = { k, step }; }
+  });
+  if (celebrate){
+    setTimeout(() => { confetti(); toast('Marco de ' + celebrate.step + '% alcançado em ' + MODES[celebrate.k].full + '!'); }, 500);
+    persist();
+  }
+
+  const vc = S.settings.view;
+  const vV = conv(v, gc, vc), gV = conv(g, gc, vc);
+  const others = Object.keys(MODES).filter(k => k !== mode);
+  const mini = k => {
+    const pp = Math.max(0, modeValue(k, T) / (+S.settings.goals[k]||1) * 100);
+    return `<div class="mini" onclick="setMode('${k}')">
+      <div class="t"><span>${MODES[k].full}</span><span class="mono">${pctFmt(pp,0)}</span></div>
+      <div class="mb"><i class="bg-${MODES[k].c}" style="width:${Math.min(100,pp)}%"></i></div>
+    </div>`;
+  };
+  const marks = [25,50,75].map(x => `<div class="mk ${p>=x?'hit':''}" style="left:${x}%"><i></i><b>${x}%</b></div>`).join('')
+    + `<div class="mk mk-end ${p>=100?'hit':''}"><i></i><b>${compact(gV, vc)}</b></div>`;
+
+  $('#hero').innerHTML = `
+    <p class="story">${storyHTML(T)}</p>
+    <div class="hero-head">
+      <div>
+        <span class="kicker">${IC.spark} Rumo ao primeiro milhão</span>
+        <h2>${M.full}</h2>
+      </div>
+      <div class="modes" ${simple ? 'style="display:none"' : ''}>
+        ${Object.keys(MODES).map(k => `<button class="btn sm ${k===mode?'on bg-'+MODES[k].c:''}" onclick="setMode('${k}')">${MODES[k].t}</button>`).join('')}
+        <button class="btn sm icon" title="Editar metas" onclick="openGoals()">${ic('target')}</button>
+      </div>
+    </div>
+    <div class="hero-nums">
+      <div class="hero-big num click-bar" id="heroBig" data-to="${vV}" data-cur="${vc}" onclick="openBreakdown('${mode}')">${compact(heroAnimated ? vV : 0, vc)}</div>
+      <div class="hero-pct click-bar" onclick="openBreakdown('${mode}')">${pctFmt(p,0)}</div>
+    </div>
+    <div class="bar click-bar" onclick="openBreakdown('${mode}')" title="Ver composição">
+      <div class="fill bg-${M.c} ${w>=99.5?'full':''}" data-w="${w}" style="width:${heroAnimated ? w : 0}%"></div>
+      <div class="runner" data-w="${w}" style="left:${heroAnimated ? Math.max(2,Math.min(98,w)) : 2}%">${IC.spark}</div>
+    </div>
+    <div class="marks">${marks}</div>
+    <div class="hero-msg">
+      <span>${tier(p)}</span>
+      <button class="linkbtn" onclick="openBreakdown('${mode}')">ver composição ${ic('right')}</button>
+    </div>
+    ${simple ? '' : `<div class="minis">${others.map(mini).join('')}</div>`}`;
+}
+function setMode(k){ S.settings.barMode = k; heroAnimated = false; commit(); }
+
+/* Composição da barra: de onde vem cada valor */
+function openBreakdown(mode){
+  const gc = S.settings.goalCurrency, T = totals();
+  const g = +S.settings.goals[mode] || 1;
+  const row = (label, sub, v, cls='') => `<div class="bd-row ${cls}">
+      <div class="bd-l"><b>${esc(label)}</b>${sub ? `<small>${sub}</small>` : ''}</div>
+      <div class="bd-v num ${v < 0 ? 'neg' : ''}">${money(v, gc)}</div></div>`;
+
+  const contasBlock = () => {
+    let sub = 0;
+    const rows = S.contas.map(c => {
+      const s = contaSaldo(c), vBRL = conv(s, c.moeda, 'BRL'), v = fromBRL(vBRL, gc); sub += v;
+      const det = c.moeda !== gc
+        ? money(s, c.moeda) + (c.moeda === 'USD' ? ' × ' + money(RATE,'BRL') : ' ÷ ' + money(RATE,'BRL'))
+        : c.dataConfirmado ? 'confirmado em ' + fmtDate(c.dataConfirmado) + (depoisConfirmado(c) ? ', mais ' + depoisConfirmado(c) + (depoisConfirmado(c) > 1 ? ' lançamentos' : ' lançamento') + ' depois' : '')
+        : (S.lancamentos.some(l => l.contaId === c.id) ? 'saldo inicial somado aos lançamentos' : 'saldo da conta');
+      return row(c.nome, det, v);
+    }).join('');
+    return `<div class="bd-group"><div class="bd-h bg-teal">${ic('wallet')} Dinheiro em conta</div>${rows || '<div class="empty">Nenhuma conta</div>'}
+      <div class="bd-row bd-sub"><div class="bd-l"><b>Subtotal liquidez</b></div><div class="bd-v num">${money(sub, gc)}</div></div></div>`;
+  };
+  const imoveisBlock = () => {
+    let sub = 0;
+    const rows = S.imoveis.map(im => {
+      const k = calcImovel(im), m = im.moeda || 'BRL', v = fromBRL(conv(k.liquido, m, 'BRL'), gc); sub += v;
+      let det;
+      if (im.metodo === 'mercado')
+        det = k.saldoDev > 0 ? 'valor ' + money(im.valorTotal, m) + ' menos saldo devedor ' + money(k.saldoDev, m) : 'valor do imóvel, sem saldo devedor';
+      else
+        det = 'tudo que já foi pago' + (k.pays.length ? ', incluindo ' + k.pays.length + ' parcela' + (k.pays.length > 1 ? 's' : '') + ' do calendário' : '');
+      return row(im.nome, det, v);
+    }).join('');
+    return `<div class="bd-group"><div class="bd-h bg-purple">${ic('home')} Imóveis</div>${rows || '<div class="empty">Nenhum imóvel</div>'}
+      <div class="bd-row bd-sub"><div class="bd-l"><b>Subtotal imóveis</b></div><div class="bd-v num">${money(sub, gc)}</div></div></div>`;
+  };
+
+  const v = modeValue(mode, T), p = v / g * 100, falta = g - v;
+  const body = mode === 'liquido' ? contasBlock() : mode === 'patrimonio' ? imoveisBlock() : contasBlock() + imoveisBlock();
+  const nota = gc === 'USD' || S.contas.some(c => c.moeda === 'USD')
+    ? `<div class="hint">Valores em dólar convertidos pela cotação de agora, ${money(RATE,'BRL')}.</div>` : '';
+
+  openModal(`
+    <div class="mhead bg-${MODES[mode].c}"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">De onde vem esse valor</small><h3>${MODES[mode].full}</h3></div>
+      <button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      ${body}
+      <div class="bd-total">
+        <div class="bd-row"><div class="bd-l"><b>Total</b></div><div class="bd-v num">${money(v, gc)}</div></div>
+        <div class="bd-row"><div class="bd-l">Meta</div><div class="bd-v num">${money(g, gc)}</div></div>
+        <div class="bd-row"><div class="bd-l">${falta > 0 ? 'Faltam' : 'Superou em'}</div><div class="bd-v num">${money(Math.abs(falta), gc)}</div></div>
+        ${T.rendBRL > 0 && mode !== 'patrimonio' ? `<div class="bd-row"><div class="bd-l">Rendendo pelo CDI</div><div class="bd-v num">${money(fromBRL(T.rendBRL, gc), gc)} por mês</div></div>` : ''}
+        <div class="pbar" style="height:16px;margin-top:10px;background:#fff"><i class="bg-${MODES[mode].c}" style="width:${Math.min(100, Math.max(0,p))}%"></i></div>
+        <div style="text-align:right;font-weight:700;margin-top:6px" class="mono">${pctFmt(p)} da meta</div>
+      </div>
+      ${nota}
+    </div>
+    <div class="mfoot">
+      ${Object.keys(MODES).filter(k => k !== mode).map(k => `<button class="btn sm" onclick="openBreakdown('${k}')">Ver ${MODES[k].full}</button>`).join('')}
+    </div>`);
+}
+function animateHero(){
+  const fill = $('#hero .fill'), run = $('#hero .runner'), big = $('#heroBig');
+  if (!fill || heroAnimated) return;
+  heroAnimated = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const w = +fill.dataset.w;
+    fill.style.width = w + '%';
+    run.style.left = Math.max(2, Math.min(98, w)) + '%';
+  }));
+  const to = +big.dataset.to, cur = big.dataset.cur, t0 = performance.now(), dur = 1500;
+  const step = t => {
+    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    big.textContent = compact(to * e, cur);
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* ---------- ABAS ---------- */
+const TABS = [
+  ['dash','Dashboard','chart'], ['his','Nossa História','heart'], ['cal','Calendário','cal'], ['pat','Patrimônio','home'],
+  ['rec','A Receber','gift'], ['wal','Wallet','wallet'], ['cfg','Ajustes','cog'], ['sob','Sobre','spark']
+];
+function renderTabs(){
+  $('#tabs').innerHTML = TABS.map(([k,t,i]) => `<button class="tab ${TAB===k?'on':''}" onclick="go('${k}')">${ic(i)}${t}</button>`).join('');
+}
+function go(k){ TAB = k; renderAll(); window.scrollTo({ top: $('#tabs').offsetTop - 10, behavior:'smooth' }); }
+function afterView(){ animateHero(); }
+
+/* ================== VIEWS ================== */
+function stat(lbl, main, sub, color, icon, desc, extra=''){
+  return `<div class="card stat ${extra}">
+    <span class="strip bg-${color}"></span>
+    <div class="h"><span class="lbl">${lbl}</span>
+      <span class="row" style="gap:6px">${desc ? `<button class="info" title="${esc(desc)}" onclick="event.stopPropagation();toast(this.title)">i</button>` : ''}<span class="ibx bg-${color}">${ic(icon)}</span></span></div>
+    <div class="v num">${main}</div>${sub ? `<div class="s num">${sub}</div>` : ''}
+  </div>`;
+}
+function lancItem(l, withDel){
+  const c = contaById(l.contaId) || { nome:'Conta removida', moeda:'BRL' };
+  const [y,m,d] = l.data.split('-');
+  const op = l.imovelId ? (S.imoveis.find(i => i.id === l.imovelId)||{}).nome : l.receberId ? 'A receber' : '';
+  return `<div class="li">
+    <div class="dt"><b>${d}</b>${MON[+m-1]}</div>
+    <div class="main"><div class="t">${esc(l.desc || 'Lançamento')}</div>
+      <div class="m">${esc(c.nome)}${op ? ' · <span class="tag">' + esc(op) + '</span>' : ''}${lancHistorico(l) ? ' · <span class="tag" title="Já estava no saldo confirmado">histórico</span>' : ''}</div></div>
+    <div class="val num ${l.valor >= 0 ? 'pos' : 'neg'}">${l.valor >= 0 ? '+' : ''}${money(l.valor, c.moeda)}</div>
+    ${withDel ? `<button class="btn sm icon" title="Editar" onclick="openLanc({id:'${l.id}'})">${ic('edit')}</button>` : ''}
+  </div>`;
+}
+
+/* ---------- DASHBOARD ---------- */
+function vDash(T){
+  const vc = S.settings.view, cv = b => compact(fromBRL(b, vc), vc);
+  const brlPct = S.contas.filter(c => c.moeda==='BRL' && +c.cdi>0).map(c => +c.cdi);
+  const sum = Math.max(1, T.liquidoBRL + T.patrBRL + T.receberBRL);
+  const parts = [['Liquidez', T.liquidoBRL, 'teal'], ['Imóveis', T.patrBRL, 'purple'], ['A receber', T.receberBRL, 'orange']];
+  const recent = S.lancamentos.slice().sort((a,b) => a.data < b.data ? 1 : -1).slice(0,5);
+  const nextRec = S.receber.filter(r => !calcRec(r).done).sort((a,b) => (a.dataPrevista||'9') < (b.dataPrevista||'9') ? -1 : 1).slice(0,4);
+  const pend = S.receber.filter(r => !calcRec(r).done).length;
+
+  return `
+  <div class="grid g-dash">
+    ${stat('Patrimônio Total', cv(T.totalBRL), '', 'coral', 'spark', 'Liquidez somada ao valor líquido dos imóveis')}
+    ${stat('Liquidez', compact(T.liquidoBRL / RATE, 'USD'), compact(T.liquidoBRL, 'BRL'), 'teal', 'wallet', 'Contas em dólar e real somadas pela cotação de hoje')}
+    ${stat('Imóveis', cv(T.patrBRL), '', 'purple', 'home', S.imoveis.length + ' imóveis, valor líquido já descontando saldo devedor')}
+    ${stat('Rendimento Mensal', cv(T.rendBRL), '', 'blue', 'trend',
+        'CDI ' + pctFmt(cdiAA(),2) + ' ao ano' + (brlPct.length ? ', ' + brlPct.join(', ') + '% do CDI' : '') + '. No ano daria ' + money(fromBRL(T.rendBRL*12, vc), vc))}
+  </div>
+
+  ${forecastCard(T)}
+
+  <details class="more">
+    <summary>${ic('right')} Mais indicadores</summary>
+    <div class="grid g-more">
+      ${stat('Valor Investido', cv(T.investBRL), '', 'teal', 'coin', 'Entradas e parcelas já pagas nos imóveis')}
+      ${stat('A Receber', cv(T.receberBRL), '', 'orange', 'gift', pend + ' valores pendentes')}
+      ${stat('Visão Futura', cv(T.futuroBRL), '', 'pink', 'eye', 'Patrimônio total, mais valores a receber, mais o retorno projetado dos imóveis')}
+    </div>
+  </details>
+
+  <h3 class="sec">Contas</h3>
+  <div class="grid g-ct">
+    ${S.contas.map(c => {
+      const s = contaSaldo(c), o = c.moeda === 'USD' ? 'BRL' : 'USD';
+      return `<div class="card pad click acct" onclick="go('wal')">
+        <span class="strip bg-${c.cor||'cream'}"></span>
+        <div class="row between"><b>${esc(c.nome)}</b><span class="chip">${c.moeda}</span></div>
+        <div class="num" style="font-size:26px;font-weight:700;margin-top:10px;letter-spacing:-.02em">${compact(s, c.moeda)}</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <h3 class="sec">Composição do patrimônio</h3>
+  <div class="card pad">
+    <div class="compo">${parts.map(([n,v,c]) => v > 0 ? `<i class="bg-${c}" style="width:${v/sum*100}%" title="${n}"></i>` : '').join('')}</div>
+    <div class="legend">${parts.map(([n,v,c]) => `<span><i class="bg-${c}"></i>${n} <b class="num">${pctFmt(v/sum*100,0)}</b></span>`).join('')}</div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:18px">
+    <div class="card pad">
+      <div class="row between" style="margin-bottom:6px"><b>Últimos lançamentos</b><button class="btn sm bg-yellow" onclick="openLanc({})">${ic('plus')}Lançar</button></div>
+      ${recent.length ? `<div class="list">${recent.map(l => lancItem(l)).join('')}</div>` : '<div class="empty">Nenhum lançamento ainda. Use o calendário para começar.</div>'}
+    </div>
+    <div class="card pad">
+      <div class="row between" style="margin-bottom:6px;gap:8px"><b>Próximos recebimentos</b><span class="row" style="gap:8px"><button class="btn sm" onclick="go('rec')">Ver todos</button><button class="btn sm bg-teal" onclick="lancarRecebimento()">${ic('plus')}Receber</button></span></div>
+      ${nextRec.length ? `<div class="list">${nextRec.map(r => { const k = calcRec(r); return `<div class="li click-li" onclick="openLanc({receberId:'${r.id}',data:todayISO()})" title="Registrar recebimento">
+          <div class="dt">${r.dataPrevista ? '<b>'+r.dataPrevista.slice(8)+'</b>'+MON[+r.dataPrevista.slice(5,7)-1] : '<b>?</b>sem data'}</div>
+          <div class="main"><div class="t">${esc(r.pessoa)}</div><div class="m">${esc(r.descricao||'')}</div></div>
+          <div class="val num pos">${money(k.pend, r.moeda||'BRL')}</div></div>`; }).join('')}</div>`
+        : '<div class="empty">Nada pendente por aqui.</div>'}
+    </div>
+  </div>`;
+}
+
+/* ---------- CALENDÁRIO ---------- */
+function vCal(){
+  const y = cal.y, m = cal.m;
+  const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate();
+  const key = y + '-' + pad(m+1);
+  const monthL = S.lancamentos.filter(l => l.data.startsWith(key));
+  const byDay = {};
+  monthL.forEach(l => { (byDay[l.data] = byDay[l.data] || []).push(l); });
+  const dueDay = {};
+  S.receber.forEach(r => { if (r.dataPrevista && r.dataPrevista.startsWith(key) && !calcRec(r).done) (dueDay[r.dataPrevista] = dueDay[r.dataPrevista] || []).push(r); });
+  const today = todayISO();
+
+  let cells = '';
+  for (let i=0;i<first;i++) cells += '<div class="day blank"></div>';
+  for (let d=1; d<=days; d++){
+    const iso = key + '-' + pad(d), ls = byDay[iso] || [];
+    const net = ls.reduce((a,l) => a + lancBRL(l), 0);
+    const hasIm = ls.some(l => l.imovelId), hasRc = ls.some(l => l.receberId), due = dueDay[iso];
+    cells += `<button class="day ${iso===today?'today':''} ${iso===cal.sel?'sel':''}" onclick="selDay('${iso}')">
+      <span class="dn">${d}</span>
+      ${ls.length ? `<span class="dv num ${net>=0?'pos':'neg'}">${net>=0?'+':''}${compact(net,'BRL').replace('R$ ','')}</span>` : ''}
+      <span class="dots">${hasIm?'<i class="bg-purple"></i>':''}${hasRc?'<i class="bg-teal"></i>':''}${due?'<i class="bg-orange"></i>':''}</span>
+    </button>`;
+  }
+
+  let ent=0, sai=0, pim=0;
+  monthL.forEach(l => { const v = lancBRL(l); if (v >= 0) ent += v; else sai += v; if (l.imovelId) pim += Math.abs(v); });
+
+  const selL = (byDay[cal.sel] || []).concat(S.lancamentos.filter(l => l.data === cal.sel && !l.data.startsWith(key)));
+  const selDue = S.receber.filter(r => r.dataPrevista === cal.sel && !calcRec(r).done);
+
+  return `
+  <div class="cal-wrap">
+    <div class="card pad">
+      <div class="cal-head">
+        <button class="btn icon" onclick="calMove(-1)">${ic('left')}</button>
+        <h2>${MONTHS[m]} ${y}</h2>
+        <button class="btn icon" onclick="calMove(1)">${ic('right')}</button>
+      </div>
+      <div class="wk">${['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].map(d => `<span>${d}</span>`).join('')}</div>
+      <div class="days">${cells}</div>
+      <div class="legend" style="margin-top:14px">
+        <span><i class="bg-purple" style="border-radius:50%"></i>Pagamento de imóvel</span>
+        <span><i class="bg-teal" style="border-radius:50%"></i>Recebido</span>
+        <span><i class="bg-orange" style="border-radius:50%"></i>Previsão de recebimento</span>
+      </div>
+      <div class="msum">
+        <div><small class="dot-l teal">Entradas</small><b class="num">${money(ent)}</b></div>
+        <div><small class="dot-l coral">Saídas</small><b class="num">${money(sai)}</b></div>
+        <div><small class="dot-l purple">Em imóveis</small><b class="num">${money(pim)}</b></div>
+        <div class="bg-yellow"><small>Saldo do mês</small><b class="num">${money(ent+sai)}</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="mhead bg-yellow"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Dia selecionado</small><h3>${fmtDate(cal.sel)}</h3></div>
+        <button class="btn bg-paper" onclick="openLanc({data:'${cal.sel}'})">${ic('plus')}Lançar</button></div>
+      <div class="mbody">
+        ${selDue.map(r => `<div class="li"><div class="dt bg-orange"><b>!</b>prev.</div><div class="main"><div class="t">Previsto receber de ${esc(r.pessoa)}</div><div class="m">${esc(r.descricao||'')}</div></div>
+          <button class="btn sm bg-teal" onclick="openLanc({data:'${cal.sel}',receberId:'${r.id}'})">Receber</button></div>`).join('')}
+        ${selL.length ? `<div class="list">${selL.map(l => lancItem(l, true)).join('')}</div>`
+          : (selDue.length ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sec">Lançamentos de ${MONTHS[m]}</h3>
+  <div class="card pad">
+    ${monthL.length ? `<div class="list">${monthL.slice().sort((a,b)=>a.data<b.data?1:-1).map(l => lancItem(l, true)).join('')}</div>` : '<div class="empty">Nenhum lançamento neste mês.</div>'}
+  </div>`;
+}
+function selDay(iso){ cal.sel = iso; renderAll(); }
+function calMove(d){
+  cal.m += d;
+  if (cal.m < 0){ cal.m = 11; cal.y--; } if (cal.m > 11){ cal.m = 0; cal.y++; }
+  cal.sel = cal.y + '-' + pad(cal.m+1) + '-01';
+  renderAll();
+}
+
+/* ---------- LANÇAMENTO (modal) ---------- */
+function openLanc(o){
+  const ex = o.id ? S.lancamentos.find(l => l.id === o.id) : null;
+  const l = ex ? clone(ex) : { data: o.data || cal.sel || todayISO(), valor:'', contaId: (S.contas.find(c => c.moeda==='BRL')||S.contas[0]||{}).id,
+    imovelId: o.imovelId || '', receberId: o.receberId || '', desc:'' };
+  const op = l.imovelId ? 'im:' + l.imovelId : l.receberId ? 'rc:' + l.receberId : 'livre';
+  const pend = S.receber.filter(r => !calcRec(r).done || r.id === l.receberId);
+  openModal(`
+    <div class="mhead bg-yellow"><div><h3>${ex ? 'Editar lançamento' : 'Novo lançamento'}</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="field"><label>Operação</label>
+        <select id="lOp" onchange="lancHint()">
+          <option value="livre" ${op==='livre'?'selected':''}>Entrada ou saída livre</option>
+          <optgroup label="Pagamento de imóvel">
+            ${S.imoveis.map(i => `<option value="im:${i.id}" ${op==='im:'+i.id?'selected':''}>Pagamento ${esc(i.nome)}</option>`).join('')}
+          </optgroup>
+          ${pend.length ? `<optgroup label="Recebimento de valor a receber">
+            ${pend.map(r => `<option value="rc:${r.id}" ${op==='rc:'+r.id?'selected':''}>Recebido de ${esc(r.pessoa)}${r.descricao ? ' · ' + esc(r.descricao) : ''}</option>`).join('')}
+          </optgroup>` : ''}
+        </select>
+        <div class="hint" id="lHint"></div>
+      </div>
+      <div class="g2">
+        <div class="field"><label>Valor</label><input id="lVal" inputmode="decimal" placeholder="ex. −1500 ou 3000" value="${ex ? fmtIn(ex.valor) : ''}"></div>
+        <div class="field"><label>Data</label><input id="lData" type="date" value="${l.data}" onchange="lancHint()"></div>
+      </div>
+      <div class="field"><label>Conta</label>
+        <select id="lConta" onchange="lancHint()">${S.contas.map(c => `<option value="${c.id}" ${c.id===l.contaId?'selected':''}>${esc(c.nome)} (${c.moeda})</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Descrição</label><input id="lDesc" placeholder="opcional" value="${esc(l.desc)}"></div>
+    </div>
+    <div class="mfoot">
+      ${ex ? `<button class="btn bg-pink" onclick="delLanc('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn bg-teal" onclick="saveLanc('${ex ? ex.id : ''}')">${ic('plus')}Salvar</button>
+    </div>`);
+  lancHint();
+  setTimeout(() => $('#lVal').focus(), 60);
+}
+function lancHint(){
+  const v = $('#lOp').value, h = $('#lHint');
+  if (v.startsWith('im:')){
+    const im = S.imoveis.find(i => i.id === v.slice(3));
+    h.innerHTML = 'Sai da conta escolhida e entra como <b>parcela paga</b> em ' + esc(im.nome) + (im.metodo === 'mercado' ? ', abatendo o saldo devedor.' : ', aumentando o valor investido e o retorno projetado.');
+  } else if (v.startsWith('rc:')) h.innerHTML = 'Entra na conta escolhida e abate do valor pendente a receber.';
+  else h.innerHTML = 'Use valor positivo para entrada e negativo para saída.';
+  const c = contaById($('#lConta').value), d = $('#lData').value;
+  if (c && c.dataConfirmado && d && d <= c.dataConfirmado)
+    h.innerHTML += '<br><span class="tag" style="background:var(--yellow)">Histórico</span> Data até o saldo confirmado em ' + fmtDate(c.dataConfirmado) + ', então não desconta da conta de novo.';
+}
+function saveLanc(id){
+  const op = $('#lOp').value;
+  let v = parseNum($('#lVal').value);
+  if (!v){ toast('Informe um valor'); return; }
+  const imovelId = op.startsWith('im:') ? op.slice(3) : '';
+  const receberId = op.startsWith('rc:') ? op.slice(3) : '';
+  if (imovelId) v = -Math.abs(v);
+  if (receberId) v = Math.abs(v);
+  let desc = $('#lDesc').value.trim();
+  if (!desc && imovelId) desc = 'Pagamento ' + S.imoveis.find(i => i.id === imovelId).nome;
+  if (!desc && receberId) desc = 'Recebido de ' + S.receber.find(r => r.id === receberId).pessoa;
+  const old = id ? S.lancamentos.find(l => l.id === id) : null;
+  const obj = { id: id || uid('l'), data: $('#lData').value || todayISO(), valor: v, contaId: $('#lConta').value,
+                imovelId, receberId, desc, cotacao: old && old.cotacao ? old.cotacao : RATE };
+  if (old) Object.assign(old, obj); else S.lancamentos.push(obj);
+  cal.sel = obj.data; cal.y = +obj.data.slice(0,4); cal.m = +obj.data.slice(5,7) - 1;
+  closeModal(); commit();
+  toast(imovelId ? 'Parcela registrada no imóvel' : receberId ? 'Recebimento registrado' : 'Lançamento salvo');
+}
+function delLanc(id){
+  if (!confirm('Excluir este lançamento?')) return;
+  S.lancamentos = S.lancamentos.filter(l => l.id !== id);
+  closeModal(); commit();
+}
+
+/* ---------- PATRIMÔNIO ---------- */
+function vPat(T){
+  const vw = S.settings.view;
+  return `
+  <div class="card pad bg-purple" style="margin-bottom:18px">
+    <div class="row between wrapr">
+      <div><div class="lbl" style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Patrimônio Imobiliário Líquido</div>
+        <div class="num" style="font-size:38px;font-weight:700;letter-spacing:-.03em;margin-top:6px">${dual(T.patrBRL).main}</div>
+</div>
+      <div class="g3" style="min-width:min(100%,480px)">
+        <div class="tile"><small>Investido</small><b class="num">${compact(fromBRL(T.investBRL,vw),vw)}</b></div>
+        <div class="tile"><small>Retorno projetado</small><b class="num pos">+${compact(fromBRL(T.lucroBRL,vw),vw)}</b></div>
+        <div class="tile"><small>Venda estimada</small><b class="num">${compact(fromBRL(T.patrBRL+T.lucroBRL,vw),vw)}</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="grid g-im">
+    ${S.imoveis.map(im => {
+      const k = calcImovel(im), m = im.moeda || 'BRL';
+      return `<div class="card im" onclick="openImovel('${im.id}')">
+        ${im.foto ? `<div class="im-photo" style="background-image:url('${esc(im.foto)}')"></div>` : ''}
+        <div class="top-s bg-${im.cor||'cream'}"><div><small>${esc(im.tipo||'Imóvel')}</small><h4>${esc(im.nome)}</h4></div>
+          <span class="chip">${ic('pin')}</span></div>
+        <div class="body">
+          <div><div class="muted" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Valor líquido</div>
+            <div class="bv num">${compact(k.liquido, m)}</div></div>
+          ${im.metodo === 'mercado' && +im.saldoDevedorBase ? `<div class="kv"><span>Saldo devedor</span><b class="num neg">${money(k.saldoDev, m)}</b></div>` : ''}
+          <div class="kv"><span>Investido</span><b class="num">${money(k.investido, m)}</b></div>
+          <div class="kv"><span>Retorno ${pctFmt(k.retPct,0)}</span><b class="num ${k.lucro < 0 ? 'neg' : 'pos'}">${k.lucro >= 0 ? '+' : ''}${money(k.lucro, m)}</b></div>
+          ${k.pctParcelas !== null ? `<div><div class="kv" style="margin-bottom:5px"><span>Parcelas</span><b>${k.parcelasPagas} de ${im.parcelasTotal}</b></div>
+            <div class="pbar"><i class="bg-${im.cor||'teal'}" style="width:${k.pctParcelas}%"></i></div></div>`
+            : `<div class="kv"><span>Pagamentos registrados</span><b>${k.pays.length}</b></div>`}
+        </div>
+      </div>`;
+    }).join('')}
+    <div class="add-card" onclick="editImovel()"><div>${ic('plus','lg')}<div>Novo imóvel</div></div></div>
+  </div>`;
+}
+function mapsUrl(a){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a||''); }
+function openImovel(id){
+  const im = S.imoveis.find(i => i.id === id); if (!im) return;
+  const k = calcImovel(im), m = im.moeda || 'BRL', o = m === 'BRL' ? 'USD' : 'BRL';
+  openModal(`
+    <div class="mhead bg-${im.cor||'cream'}">
+      <div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">${esc(im.tipo||'Imóvel')}${im.dataCompra ? ' · desde ' + fmtDate(im.dataCompra) : ''}</small><h3>${esc(im.nome)}</h3></div>
+      <button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button>
+    </div>
+    <div class="mbody">
+      ${im.foto ? `<div class="im-banner" style="background-image:url('${esc(im.foto)}')"></div>` : ''}
+      <div class="addr">
+        <div class="t">${ic('pin')} ${esc(im.endereco || 'Endereço não informado')}</div>
+        ${im.endereco ? `<a class="mapbtn" href="${mapsUrl(im.endereco)}" target="_blank" rel="noopener" title="Abrir no Google Maps">${ic('pin','lg')}</a>` : ''}
+      </div>
+      <div class="g3">
+        <div class="tile bg-yellow"><small>Valor líquido</small><b class="num">${money(k.liquido, m)}</b><em class="num">${money(conv(k.liquido,m,o),o)}</em></div>
+        <div class="tile"><small>Valor total do imóvel</small><b class="num">${+im.valorTotal ? money(im.valorTotal, m) : 'não informado'}</b></div>
+        <div class="tile"><small>Saldo devedor</small><b class="num ${k.saldoDev?'neg':''}">${money(k.saldoDev, m)}</b>${im.metodo==='mercado' && +im.saldoDevedorBase ? `<em>inicial ${money(im.saldoDevedorBase, m)}</em>` : ''}</div>
+        <div class="tile"><small>Entrada</small><b class="num">${money(im.entrada||0, m)}</b></div>
+        <div class="tile"><small>Parcelas pagas</small><b>${k.parcelasPagas}${+im.parcelasTotal ? ' de ' + im.parcelasTotal : ''}</b>${k.restantes !== null ? `<em>${k.restantes} restantes</em>` : ''}</div>
+        <div class="tile"><small>Valor da parcela</small><b class="num">${+im.parcelaValor ? money(im.parcelaValor, m) : 'variável'}</b></div>
+        <div class="tile"><small>Pago antes do sistema</small><b class="num">${money(im.pagoAntes||0, m)}</b></div>
+        <div class="tile"><small>Pago pelo calendário</small><b class="num">${money(k.pagoSis, m)}</b></div>
+        <div class="tile bg-teal"><small>Total investido</small><b class="num">${money(k.investido, m)}</b></div>
+      </div>
+      ${k.pctParcelas !== null ? `<div style="margin-top:14px"><div class="kv" style="margin-bottom:6px"><span>Progresso das parcelas</span><b>${pctFmt(k.pctParcelas,0)}</b></div><div class="pbar" style="height:16px"><i class="bg-${im.cor||'teal'}" style="width:${k.pctParcelas}%"></i></div></div>` : ''}
+
+      <div class="ret" id="retBox">${retBoxHTML(im)}</div>
+
+      <div class="row between" style="margin:6px 0"><b>Histórico de pagamentos</b>
+        <button class="btn sm bg-purple" onclick="closeModal();openLanc({imovelId:'${im.id}',data:todayISO()})">${ic('plus')}Registrar parcela</button></div>
+      ${k.pays.length ? `<div class="list">${k.pays.slice().reverse().map(l => lancItem(l, true)).join('')}</div>` : '<div class="empty">Nenhuma parcela lançada pelo calendário ainda.</div>'}
+      ${im.notas ? `<div class="tile" style="margin-top:14px"><small>Observações</small><div style="white-space:pre-wrap;line-height:1.45">${esc(im.notas)}</div></div>` : ''}
+    </div>
+    <div class="mfoot">
+      <button class="btn bg-pink" onclick="delImovel('${im.id}')">${ic('trash')}Excluir</button>
+      <button class="btn bg-yellow" onclick="editImovel('${im.id}')">${ic('edit')}Editar informações</button>
+    </div>`, true);
+}
+/* Retorno: por porcentagem ou pelo valor estimado de venda */
+function retBoxHTML(im){
+  const k = calcImovel(im), m = im.moeda || 'BRL', modo = im.vendaModo === 'valor' ? 'valor' : 'pct';
+  const sign = v => (v >= 0 ? '+' : '') + money(v, m);
+  return `
+    <div class="row between wrapr" style="gap:10px">
+      <b>Retorno esperado na venda</b>
+      <div class="seg seg-sm">
+        <button class="${modo==='pct'?'on':''}" onclick="retModo('${im.id}','pct')">Porcentagem</button>
+        <button class="${modo==='valor'?'on':''}" onclick="retModo('${im.id}','valor')">Valor de venda</button>
+      </div>
+    </div>
+    ${modo === 'pct' ? `
+      <div class="row between" style="margin-top:12px"><span class="muted" style="font-weight:600;font-size:13px">Arraste para ajustar</span><span class="chip mono" id="retLbl">${pctFmt(k.retPct,0)}</span></div>
+      <input type="range" min="0" max="150" step="1" value="${+im.retorno||0}" oninput="retPreview('${im.id}', this.value)" onchange="retSave('${im.id}', this.value)">`
+    : `
+      <div class="g2" style="margin-top:12px;align-items:end">
+        <div class="field" style="margin:0"><label>Valor estimado de venda do imóvel</label><input id="retValor" inputmode="decimal" placeholder="ex. 350.000" value="${fmtIn(im.vendaValor)}" oninput="retPreviewValor('${im.id}', this.value)" onchange="retSaveValor('${im.id}', this.value)"></div>
+        <div class="tile" style="text-align:center"><small>Retorno calculado</small><b class="mono" id="retLbl">${+im.vendaValor > 0 ? pctFmt(k.retPct,1) : '0%'}</b></div>
+      </div>
+      ${k.saldoDev > 0 ? `<div class="hint">Desconta o saldo devedor de ${money(k.saldoDev, m)} para chegar ao que fica com vocês.</div>` : ''}`}
+    <div class="g3" style="margin-top:12px">
+      <div class="tile"><small>Lucro estimado</small><b class="num ${k.lucro < 0 ? 'neg' : 'pos'}" id="retLucro">${sign(k.lucro)}</b></div>
+      <div class="tile"><small>Vocês recebem na venda</small><b class="num" id="retVenda">${money(k.venda, m)}</b></div>
+      <div class="tile"><small>Retorno mínimo</small><b class="num">${money(k.investido, m)}</b><em>tudo que já foi pago</em></div>
+    </div>`;
+}
+function retModo(id, modo){
+  const im = S.imoveis.find(i => i.id === id); im.vendaModo = modo;
+  persist(); renderAll(); $('#retBox').innerHTML = retBoxHTML(im);
+}
+function retPreview(id, v){
+  const im = S.imoveis.find(i => i.id === id), k = calcImovel(im), m = im.moeda||'BRL', l = k.liquido * v/100;
+  $('#retLbl').textContent = v + '%'; $('#retLucro').textContent = '+' + money(l, m); $('#retVenda').textContent = money(k.liquido + l, m);
+}
+function retSave(id, v){ S.imoveis.find(i => i.id === id).retorno = +v; persist(); renderAll(); }
+function retPreviewValor(id, txt){
+  const im = S.imoveis.find(i => i.id === id), k = calcImovel(im), m = im.moeda||'BRL', v = parseNum(txt);
+  if (!v){ $('#retLbl').textContent = '0%'; return; }
+  const venda = v - k.saldoDev, lucro = venda - k.liquido, pct = k.liquido > 0 ? lucro / k.liquido * 100 : 0;
+  $('#retLbl').textContent = pctFmt(pct,1);
+  $('#retLucro').textContent = (lucro >= 0 ? '+' : '') + money(lucro, m);
+  $('#retLucro').className = 'num ' + (lucro < 0 ? 'neg' : 'pos');
+  $('#retVenda').textContent = money(venda, m);
+}
+function retSaveValor(id, txt){ S.imoveis.find(i => i.id === id).vendaValor = parseNum(txt); persist(); renderAll(); }
+
+function editImovel(id){
+  const ex = id ? S.imoveis.find(i => i.id === id) : null;
+  const im = ex ? clone(ex) : { nome:'', tipo:'Studio', cor: COLORS[S.imoveis.length % COLORS.length], endereco:'', metodo:'aportes', valorTotal:0,
+    saldoDevedorBase:0, entrada:0, pagoAntes:0, parcelasPagasBase:0, parcelaValor:0, parcelasTotal:0, dataCompra:'', retorno:20, moeda:'BRL', notas:'' };
+  const f = (k, lbl, ph='') => `<div class="field"><label>${lbl}</label><input id="f_${k}" inputmode="decimal" placeholder="${ph}" value="${fmtIn(im[k])}"></div>`;
+  openModal(`
+    <div class="mhead bg-yellow"><h3>${ex ? 'Editar ' + esc(ex.nome) : 'Novo imóvel'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Nome</label><input id="f_nome" value="${esc(im.nome)}"></div>
+        <div class="field"><label>Tipo</label><select id="f_tipo">${['Casa','Apartamento','Studio','Terreno','Sala comercial','Outro'].map(t => `<option ${t===im.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+      </div>
+      <div class="field"><label>Endereço completo</label><input id="f_endereco" value="${esc(im.endereco)}" placeholder="Rua, número, bairro, cidade, estado"><div class="hint">Usado no botão que abre o Google Maps.</div></div>
+      ${photoField(im.foto)}
+      <div class="field"><label>Como calcular o valor líquido</label>
+        <select id="f_metodo">
+          <option value="mercado" ${im.metodo==='mercado'?'selected':''}>Valor total menos saldo devedor (imóvel financiado ou quitado)</option>
+          <option value="aportes" ${im.metodo==='aportes'?'selected':''}>Soma de tudo que já foi pago (imóvel na planta ou em pagamento)</option>
+        </select>
+        <div class="hint">No primeiro modo cada parcela lançada abate o saldo devedor. No segundo cada parcela soma ao valor investido.</div>
+      </div>
+      <div class="g2">
+        ${f('valorTotal','Valor total do imóvel')}
+        ${f('saldoDevedorBase','Saldo devedor inicial')}
+        ${f('entrada','Valor de entrada')}
+        <div class="field"><label>Já pago antes do sistema</label><input id="f_pagoAntes" inputmode="decimal" value="${fmtIn(im.pagoAntes)}"><div class="hint">Não some aqui parcelas que você vai lançar no calendário, senão contam duas vezes.</div></div>
+        ${f('parcelaValor','Valor da parcela')}
+        ${f('parcelasTotal','Total de parcelas')}
+        ${f('parcelasPagasBase','Parcelas já pagas antes')}
+        <div class="field"><label>Retorno esperado</label>
+          <select id="f_vendaModo" onchange="vendaModoForm()"><option value="pct" ${im.vendaModo!=='valor'?'selected':''}>Por porcentagem</option><option value="valor" ${im.vendaModo==='valor'?'selected':''}>Por valor de venda</option></select></div>
+        <div class="field" id="fw_retorno" ${im.vendaModo==='valor'?'style="display:none"':''}><label>% de retorno esperado</label><input id="f_retorno" inputmode="decimal" value="${fmtIn(im.retorno)}"></div>
+        <div class="field" id="fw_vendaValor" ${im.vendaModo!=='valor'?'style="display:none"':''}><label>Valor estimado de venda</label><input id="f_vendaValor" inputmode="decimal" value="${fmtIn(im.vendaValor)}"><div class="hint">A porcentagem de retorno é calculada sozinha.</div></div>
+      </div>
+      <div class="g2">
+        <div class="field"><label>Data da compra</label><input id="f_dataCompra" type="date" value="${im.dataCompra||''}"></div>
+        <div class="field"><label>Moeda</label><select id="f_moeda"><option ${im.moeda==='BRL'?'selected':''}>BRL</option><option ${im.moeda==='USD'?'selected':''}>USD</option></select></div>
+      </div>
+      <div class="field"><label>Cor do card</label><div class="row wrapr">${COLORS.map(c => `<button type="button" class="btn icon bg-${c} colorpick" data-c="${c}" style="width:36px;height:36px;${c===im.cor?'outline:3px solid var(--ink);outline-offset:2px':''}" onclick="pickColor(this)"></button>`).join('')}</div><input type="hidden" id="f_cor" value="${im.cor}"></div>
+      <div class="field"><label>Observações</label><textarea id="f_notas" rows="3" placeholder="Construtora, contrato, sócio, previsão de entrega...">${esc(im.notas)}</textarea></div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn bg-teal" onclick="saveImovel('${ex ? ex.id : ''}')">Salvar imóvel</button></div>`);
+}
+function vendaModoForm(){
+  const v = $('#f_vendaModo').value === 'valor';
+  $('#fw_retorno').style.display = v ? 'none' : ''; $('#fw_vendaValor').style.display = v ? '' : 'none';
+}
+function pickColor(b){
+  document.querySelectorAll('.colorpick').forEach(x => x.style.outline = 'none');
+  b.style.outline = '3px solid var(--ink)'; b.style.outlineOffset = '2px'; $('#f_cor').value = b.dataset.c;
+}
+function saveImovel(id){
+  const nome = $('#f_nome').value.trim(); if (!nome){ toast('Dê um nome ao imóvel'); return; }
+  if (photoPending()) return;
+  const n = k => parseNum($('#f_' + k).value);
+  const obj = { nome, tipo: $('#f_tipo').value, endereco: $('#f_endereco').value.trim(), metodo: $('#f_metodo').value,
+    valorTotal: n('valorTotal'), saldoDevedorBase: n('saldoDevedorBase'), entrada: n('entrada'), pagoAntes: n('pagoAntes'),
+    parcelaValor: n('parcelaValor'), parcelasTotal: Math.round(n('parcelasTotal')), parcelasPagasBase: Math.round(n('parcelasPagasBase')),
+    retorno: n('retorno'), vendaModo: $('#f_vendaModo').value, vendaValor: n('vendaValor'), dataCompra: $('#f_dataCompra').value, moeda: $('#f_moeda').value, cor: $('#f_cor').value, notas: $('#f_notas').value, foto: $('#f_foto').value };
+  if (id){ Object.assign(S.imoveis.find(i => i.id === id), obj); }
+  else { obj.id = uid('im'); S.imoveis.push(obj); id = obj.id; }
+  commit(); openImovel(id); toast('Imóvel salvo');
+}
+function delImovel(id){
+  const im = S.imoveis.find(i => i.id === id);
+  if (!confirm('Excluir ' + im.nome + '? Os lançamentos continuam no calendário, só perdem o vínculo.')) return;
+  S.imoveis = S.imoveis.filter(i => i.id !== id);
+  S.lancamentos.forEach(l => { if (l.imovelId === id) l.imovelId = ''; });
+  closeModal(); commit();
+}
+
+/* ---------- A RECEBER ---------- */
+function vRec(T){
+  const vw = S.settings.view;
+  const ativos = S.receber.filter(r => !calcRec(r).done), quit = S.receber.filter(r => calcRec(r).done);
+  const card = r => {
+    const k = calcRec(r), m = r.moeda || 'BRL';
+    return `<div class="card pad ${k.done ? 'bg-cream' : ''}">
+      <div class="row between"><div><b style="font-size:17px">${esc(r.pessoa)}</b><div class="muted" style="font-size:13px">${esc(r.descricao||'')}</div></div>
+        <span class="chip ${k.done ? 'bg-teal' : 'bg-orange'}">${k.done ? 'Quitado' : r.dataPrevista ? fmtDate(r.dataPrevista) : 'Sem data'}</span></div>
+      <div class="num" style="font-size:26px;font-weight:700;margin:12px 0 2px">${money(k.pend, m)}</div>
+      <div class="muted" style="font-size:12px;font-weight:600">pendente de ${money(r.valor, m)}</div>
+      <div class="pbar" style="margin:10px 0"><i class="bg-teal" style="width:${k.pct}%"></i></div>
+      <div class="kv"><span>Já recebido</span><b class="num pos">${money(k.rec, m)}</b></div>
+      <div class="row" style="margin-top:12px;gap:8px">
+        ${!k.done ? `<button class="btn sm bg-teal" onclick="openLanc({receberId:'${r.id}',data:todayISO()})">${ic('plus')}Registrar recebimento</button>` : ''}
+        <button class="btn sm icon" onclick="editRec('${r.id}')">${ic('edit')}</button>
+      </div>
+    </div>`;
+  };
+  return `
+  <div class="grid g-rec">
+    ${stat('A receber em real', money(T.receberBRL, 'BRL'), recNativo('BRL'), 'orange', 'gift', 'Todos os valores pendentes convertidos para real pela cotação de hoje')}
+    ${stat('A receber em dólar', money(T.receberBRL / RATE, 'USD'), recNativo('USD'), 'teal', 'dollar', 'Todos os valores pendentes convertidos para dólar pela cotação de hoje')}
+  </div>
+  <div class="card proj">
+    <div class="proj-h"><span class="ibx bg-pink">${ic('eye')}</span><div><small>Projeção total</small><span class="muted">Se tudo for recebido e os imóveis vendidos pelo retorno esperado</span></div></div>
+    <div class="proj-rows">
+      <div class="kv"><span>Patrimônio total hoje</span><b class="num">${money(fromBRL(T.totalBRL, vw), vw)}</b></div>
+      <div class="kv"><span>Valores a receber</span><b class="num pos">+${money(fromBRL(T.receberBRL, vw), vw)}</b></div>
+      <div class="kv"><span>Retorno projetado dos imóveis</span><b class="num ${T.lucroBRL < 0 ? 'neg' : 'pos'}">${T.lucroBRL >= 0 ? '+' : ''}${money(fromBRL(T.lucroBRL, vw), vw)}</b></div>
+    </div>
+    <div class="proj-total"><span>Total projetado</span><div style="text-align:right"><b class="num">${money(fromBRL(T.futuroBRL, vw), vw)}</b><small class="num">${money(fromBRL(T.futuroBRL, vw === 'BRL' ? 'USD' : 'BRL'), vw === 'BRL' ? 'USD' : 'BRL')}</small></div></div>
+  </div>
+  <div class="row between" style="margin-bottom:12px"><h3 class="sec" style="margin:0;flex:1">Pendentes</h3><button class="btn bg-yellow" style="margin-left:14px" onclick="editRec()">${ic('plus')}Novo valor</button></div>
+  ${ativos.length ? `<div class="grid g-ct">${ativos.map(card).join('')}</div>` : '<div class="empty">Nenhum valor pendente. Adicione empréstimos a familiares, vendas futuras ou qualquer recebimento previsto.</div>'}
+  ${quit.length ? `<h3 class="sec">Quitados</h3><div class="grid g-ct">${quit.map(card).join('')}</div>` : ''}`;
+}
+function recNativo(cur){
+  const n = S.receber.filter(r => !calcRec(r).done && (r.moeda || 'BRL') === cur).reduce((a,r) => a + calcRec(r).pend, 0);
+  return n ? 'Pendente em ' + (cur === 'BRL' ? 'real' : 'dólar') + ' ' + money(n, cur) : '';
+}
+function lancarRecebimento(){
+  const pend = S.receber.filter(r => !calcRec(r).done).sort((a,b) => (a.dataPrevista||'9') < (b.dataPrevista||'9') ? -1 : 1);
+  if (!pend.length){ editRec(); toast('Cadastre primeiro quem vai pagar'); return; }
+  openLanc({ receberId: pend[0].id, data: todayISO() });
+}
+function editRec(id){
+  const ex = id ? S.receber.find(r => r.id === id) : null;
+  const r = ex || { pessoa:'', descricao:'', valor:0, moeda:'BRL', dataPrevista:'' };
+  openModal(`
+    <div class="mhead bg-orange"><h3>${ex ? 'Editar valor a receber' : 'Novo valor a receber'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>De quem</label><input id="r_pessoa" value="${esc(r.pessoa)}" placeholder="Nome ou origem"></div>
+        <div class="field"><label>Valor total</label><input id="r_valor" inputmode="decimal" value="${fmtIn(r.valor)}"></div>
+      </div>
+      <div class="field"><label>Descrição</label><input id="r_desc" value="${esc(r.descricao)}" placeholder="Empréstimo, venda, reembolso..."></div>
+      <div class="g2">
+        <div class="field"><label>Data prevista</label><input id="r_data" type="date" value="${r.dataPrevista||''}"></div>
+        <div class="field"><label>Moeda</label><select id="r_moeda"><option ${r.moeda==='BRL'?'selected':''}>BRL</option><option ${r.moeda==='USD'?'selected':''}>USD</option></select></div>
+      </div>
+      <div class="hint">Cada recebimento lançado no calendário abate deste valor automaticamente.</div>
+    </div>
+    <div class="mfoot">
+      ${ex ? `<button class="btn bg-pink" onclick="delRec('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn bg-teal" onclick="saveRec('${ex ? ex.id : ''}')">Salvar</button>
+    </div>`);
+}
+function saveRec(id){
+  const pessoa = $('#r_pessoa').value.trim(), valor = parseNum($('#r_valor').value);
+  if (!pessoa || !valor){ toast('Preencha quem e o valor'); return; }
+  const obj = { pessoa, valor: Math.abs(valor), descricao: $('#r_desc').value.trim(), dataPrevista: $('#r_data').value, moeda: $('#r_moeda').value };
+  if (id) Object.assign(S.receber.find(r => r.id === id), obj); else { obj.id = uid('rc'); S.receber.push(obj); }
+  closeModal(); commit();
+}
+function delRec(id){
+  if (!confirm('Excluir este valor a receber?')) return;
+  S.receber = S.receber.filter(r => r.id !== id);
+  S.lancamentos.forEach(l => { if (l.receberId === id) l.receberId = ''; });
+  closeModal(); commit();
+}
+
+/* ---------- WALLET ---------- */
+function sparkSVG(h){
+  if (!h || h.length < 2) return '<svg class="spark"></svg>';
+  const W = 600, H = 90, P = 8, vs = h.map(x => x.v), mn = Math.min(...vs), mx = Math.max(...vs), rg = (mx - mn) || 1;
+  const pts = h.map((x,i) => [P + i*(W-2*P)/(h.length-1), H - P - (x.v-mn)/rg*(H-2*P)]);
+  const d = pts.map((p,i) => (i?'L':'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const last = pts[pts.length-1];
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <path d="${d} L ${last[0]} ${H} L ${P} ${H} Z" fill="#FFDD5C" opacity=".55"/>
+    <path d="${d}" fill="none" stroke="#1C1A1A" stroke-width="3" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="6" fill="#F2685B" stroke="#1C1A1A" stroke-width="2.5"/></svg>`;
+}
+function vWal(T){
+  const u = MARKET.usd, up = u && u.pct >= 0;
+  const h = MARKET.hist || [], first = h.length ? h[0].v : null, var30 = first ? (RATE/first - 1)*100 : null;
+  const mens = (Math.pow(1 + cdiAA()/100, 1/12) - 1) * 100;
+  return `
+  <div class="grid g-wal">
+    <div class="card fx">
+      <div class="row between wrapr"><span class="kicker">${IC.spark} Dólar comercial</span>
+        <button class="btn sm bg-paper" onclick="refreshMarket()">${ic('refresh')}Atualizar</button></div>
+      <div class="row wrapr" style="align-items:flex-end;margin-top:16px;gap:14px">
+        <div class="big num">${money(RATE,'BRL')}</div>
+        ${u ? `<span class="chip ${up ? 'bg-yellow' : 'bg-pink'} mono">${up?'▲':'▼'} ${pctFmt(Math.abs(u.pct),2)} hoje</span>` : ''}
+      </div>
+      <div class="row wrapr" style="margin-top:10px;gap:8px;font-weight:600;font-size:13px">
+        ${u && u.high ? `<span class="chip">Máx ${money(u.high,'BRL')}</span><span class="chip">Mín ${money(u.low,'BRL')}</span>` : ''}
+        ${var30 !== null ? `<span class="chip">30 dias ${var30>=0?'+':'−'}${pctFmt(Math.abs(var30),2)}</span>` : ''}
+        <span class="chip">${MARKET.live ? 'Ao vivo' : 'Última cotação salva'}${u && u.date ? ' · ' + esc(String(u.date).slice(0,16)) : ''}</span>
+      </div>
+      ${sparkSVG(h)}
+      <div class="conv">
+        <div><label>Dólar</label><input id="cvU" inputmode="decimal" placeholder="US$" oninput="cvFrom('U')"></div>
+        <div class="eq">⇄</div>
+        <div><label>Real</label><input id="cvB" inputmode="decimal" placeholder="R$" oninput="cvFrom('B')"></div>
+      </div>
+    </div>
+    <div class="grid" style="gap:18px">
+      ${stat('Total em dólar', money(T.liquidoBRL / RATE,'USD'), 'Patrimônio total ' + money(T.totalBRL / RATE,'USD'), 'yellow', 'dollar', 'Tudo convertido pela cotação de agora')}
+      ${stat('Total em real', money(T.liquidoBRL,'BRL'), 'Patrimônio total ' + money(T.totalBRL,'BRL'), 'purple', 'wallet', 'Liquidez somada nas duas moedas')}
+      <div class="card pad bg-blue">
+        <div class="row between"><b>CDI atual</b><span class="chip">${MARKET.cdi ? esc(MARKET.cdi.src) + ' ' + esc(MARKET.cdi.date) : 'estimado'}${S.settings.cdiManual ? ' · manual' : ''}</span></div>
+        <div class="num" style="font-size:30px;font-weight:700;margin-top:8px">${pctFmt(cdiAA(),2)} <small style="font-size:14px">ao ano</small></div>
+        <div class="num" style="font-weight:600">${pctFmt(mens,3)} ao mês</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row between" style="margin:28px 0 12px"><h3 class="sec" style="margin:0;flex:1">Contas</h3><button class="btn bg-yellow" style="margin-left:14px" onclick="editConta()">${ic('plus')}Nova conta</button></div>
+  <div class="grid g-ct">
+    ${S.contas.map(c => {
+      const s = contaSaldo(c), o = c.moeda === 'USD' ? 'BRL' : 'USD', n = S.lancamentos.filter(l => l.contaId === c.id).length;
+      const rm = c.moeda === 'BRL' && +c.cdi > 0 ? Math.max(0,s) * (Math.pow(1 + cdiAA()/100, 1/12) - 1) * c.cdi/100 : 0;
+      return `<div class="card pad bg-${c.cor||'paper'}">
+        <div class="row between"><b style="font-size:17px">${esc(c.nome)}</b><button class="btn sm icon bg-paper" onclick="editConta('${c.id}')">${ic('edit')}</button></div>
+        <div class="num" style="font-size:30px;font-weight:700;margin-top:12px;letter-spacing:-.02em">${money(s, c.moeda)}</div>
+        <div class="num" style="font-weight:600;opacity:.8">${money(conv(s,c.moeda,o),o)}</div>
+        <div class="row wrapr" style="margin-top:12px;gap:6px">
+          <span class="chip">${c.moeda}</span>
+          ${c.dataConfirmado ? `<span class="chip">✓ confirmado em ${fmtDate(c.dataConfirmado)}</span>` : `<span class="chip">${n} lançamentos</span>`}
+          ${rm ? `<span class="chip">${ic('trend')} ${money(rm)} por mês</span>` : ''}
+        </div>
+        <button class="btn sm bg-paper" style="margin-top:12px" onclick="editValorAtual('${c.id}')">${ic('edit')}Editar valor atual</button>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function cvFrom(w){
+  if (w === 'U'){ const v = parseNum($('#cvU').value); $('#cvB').value = v ? (v*RATE).toLocaleString('pt-BR',{maximumFractionDigits:2}) : ''; }
+  else { const v = parseNum($('#cvB').value); $('#cvU').value = v ? (v/RATE).toLocaleString('pt-BR',{maximumFractionDigits:2}) : ''; }
+}
+function refreshMarket(){ toast('Buscando cotação'); if (GAS) google.script.run.withSuccessHandler(applyMarket).withFailureHandler(clientMarket).getMarket(); else clientMarket(); }
+function editConta(id){
+  const ex = id ? S.contas.find(c => c.id === id) : null;
+  const c = ex || { nome:'', moeda:'BRL', saldoInicial:0, cdi:0, cor:'blue' };
+  openModal(`
+    <div class="mhead bg-yellow"><h3>${ex ? 'Editar conta' : 'Nova conta'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Nome</label><input id="c_nome" value="${esc(c.nome)}"></div>
+        <div class="field"><label>Moeda</label><select id="c_moeda"><option ${c.moeda==='BRL'?'selected':''}>BRL</option><option ${c.moeda==='USD'?'selected':''}>USD</option></select></div>
+        ${ex && ex.dataConfirmado ? `<div class="field"><label>Saldo</label><input value="${money(contaSaldo(ex), ex.moeda)}" disabled><input id="c_saldo" type="hidden" value="${fmtIn(c.saldoInicial)}"></div>`
+          : `<div class="field"><label>Saldo inicial</label><input id="c_saldo" inputmode="decimal" value="${fmtIn(c.saldoInicial)}"></div>`}
+        <div class="field"><label>Rende % do CDI</label><input id="c_cdi" inputmode="decimal" value="${fmtIn(c.cdi)}" placeholder="0 se não rende"></div>
+      </div>
+      <div class="hint">${ex && ex.dataConfirmado ? 'Saldo confirmado em ' + fmtDate(ex.dataConfirmado) + '. Para mudar, use Editar valor atual no card da conta.' : 'Para acertar com o banco, use Editar valor atual no card da conta.'}</div>
+      <div class="field" style="margin-top:14px"><label>Cor</label><div class="row wrapr">${COLORS.map(x => `<button type="button" class="btn icon bg-${x} colorpick" data-c="${x}" style="width:36px;height:36px;${x===c.cor?'outline:3px solid var(--ink);outline-offset:2px':''}" onclick="pickColor(this)"></button>`).join('')}</div><input type="hidden" id="f_cor" value="${c.cor}"></div>
+    </div>
+    <div class="mfoot">
+      ${ex ? `<button class="btn bg-pink" onclick="delConta('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn bg-teal" onclick="saveConta('${ex ? ex.id : ''}')">Salvar</button>
+    </div>`);
+}
+function saveConta(id){
+  const nome = $('#c_nome').value.trim(); if (!nome){ toast('Dê um nome à conta'); return; }
+  const obj = { nome, moeda: $('#c_moeda').value, saldoInicial: parseNum($('#c_saldo').value), cdi: parseNum($('#c_cdi').value), cor: $('#f_cor').value };
+  if (id) Object.assign(S.contas.find(c => c.id === id), obj); else { obj.id = uid('c'); S.contas.push(obj); }
+  closeModal(); commit();
+}
+function delConta(id){
+  if (S.lancamentos.some(l => l.contaId === id)){ toast('Essa conta tem lançamentos. Mova ou exclua antes.'); return; }
+  if (!confirm('Excluir esta conta?')) return;
+  S.contas = S.contas.filter(c => c.id !== id); closeModal(); commit();
+}
+
+/* ---------- AJUSTES ---------- */
+function vCfg(){
+  const g = S.settings.goals, gc = S.settings.goalCurrency;
+  return `
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+    <div class="card">
+      <div class="mhead bg-coral"><h3>${ic('target')} Metas</h3></div>
+      <div class="mbody">
+        ${Object.keys(MODES).map(k => `<div class="row between" style="padding:10px 0;border-bottom:2px dashed var(--line)"><b>${MODES[k].full}</b><span class="num chip bg-${MODES[k].c}">${money(g[k], gc)}</span></div>`).join('')}
+        <button class="btn bg-yellow" style="margin-top:14px" onclick="openGoals()">${ic('edit')}Editar metas</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mhead bg-blue"><h3>${ic('trend')} Rendimento</h3></div>
+      <div class="mbody">
+        <div class="field"><label>CDI manual em % ao ano</label><input id="cfgCdi" inputmode="decimal" value="${fmtIn(S.settings.cdiManual)}" placeholder="vazio usa o CDI oficial (${pctFmt(MARKET.cdi ? MARKET.cdi.aa : 14.9,2)})"></div>
+        <button class="btn bg-teal" onclick="S.settings.cdiManual = parseNum($('#cfgCdi').value) || null; commit(); toast('CDI atualizado')">Salvar</button>
+        <div class="hint">O % do CDI de cada conta é definido na aba Wallet.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mhead bg-purple"><h3>${ic('coin')} Backup</h3></div>
+      <div class="mbody">
+        <div class="hint" style="margin:0 0 10px">Os dados ficam na aba Dados da planilha. Aqui você pode copiar ou restaurar uma cópia manual.</div>
+        <textarea id="bk" rows="5" style="font-family:monospace;font-size:12px"></textarea>
+        <div class="row wrapr" style="margin-top:10px">
+          <button class="btn sm" onclick="$('#bk').value = JSON.stringify(S); $('#bk').select(); toast('Backup gerado, copie o texto')">Gerar backup</button>
+          <button class="btn sm bg-pink" onclick="importBk()">Restaurar</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function importBk(){
+  const t = $('#bk').value.trim(); if (!t) return;
+  try { const d = JSON.parse(t); if (!d.contas) throw 0; if (!confirm('Substituir todos os dados atuais por este backup?')) return; S = hydrate(t); commit(); toast('Backup restaurado'); }
+  catch(e){ toast('Backup inválido'); }
+}
+function openGoals(){
+  const g = S.settings.goals;
+  openModal(`
+    <div class="mhead bg-coral"><h3>Editar metas</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      ${Object.keys(MODES).map(k => `<div class="field"><label>${MODES[k].full}</label><input id="g_${k}" inputmode="decimal" value="${fmtIn(g[k])}"></div>`).join('')}
+      <div class="field"><label>Moeda das metas</label><select id="g_cur"><option ${S.settings.goalCurrency==='BRL'?'selected':''} value="BRL">Real (R$)</option><option ${S.settings.goalCurrency==='USD'?'selected':''} value="USD">Dólar (US$)</option></select></div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn bg-teal" onclick="saveGoals()">Salvar metas</button></div>`);
+}
+function saveGoals(){
+  Object.keys(MODES).forEach(k => { const v = parseNum($('#g_' + k).value); if (v > 0) S.settings.goals[k] = v; });
+  S.settings.goalCurrency = $('#g_cur').value;
+  S.settings.marcos = {}; heroAnimated = false;
+  closeModal(); commit(); toast('Metas atualizadas');
+}
+
+/* ================== MODAL ================== */
+function openModal(html, wide){
+  const b = $('#mbox'); b.className = 'mbox card' + (wide ? ' wide' : ''); b.innerHTML = html;
+  $('#modal').classList.remove('hidden'); document.body.style.overflow = 'hidden';
+}
+function closeModal(){ $('#modal').classList.add('hidden'); document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+/* ================== HISTÓRIA, CONQUISTAS E PREVISÃO ================== */
+function monthKey(d){ d = d || new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1); }
+function monthName(key){ const [y,m] = key.split('-'); return MONTHS[+m-1] + ' de ' + y; }
+function addMonths(n){ const d = new Date(); d.setDate(1); d.setMonth(d.getMonth()+n); return monthKey(d); }
+function monthsBetween(a, b){ return (+b.slice(0,4) - +a.slice(0,4))*12 + (+b.slice(5,7) - +a.slice(5,7)); }
+function goalTotalBRL(){ return conv(+S.settings.goals.total || 1e6, S.settings.goalCurrency, 'BRL'); }
+
+function snapshot(T){
+  S.snaps = S.snaps || {};
+  const k = monthKey(), cur = S.snaps[k];
+  const val = { t: Math.round(T.totalBRL), l: Math.round(T.liquidoBRL), p: Math.round(T.patrBRL) };
+  if (!cur || Math.abs(cur.t - val.t) >= 1){ S.snaps[k] = val; return true; }
+  return false;
+}
+function cashFlowByMonth(){
+  const m = {};
+  S.lancamentos.forEach(l => { if (l.imovelId) return; const k = l.data.slice(0,7); m[k] = (m[k]||0) + lancBRL(l); });
+  return m;
+}
+function growthMonth(T){
+  const k = monthKey(), keys = Object.keys(S.snaps||{}).filter(x => x < k).sort();
+  if (keys.length) return T.totalBRL - S.snaps[keys[keys.length-1]].t;
+  return cashFlowByMonth()[k] || 0;
+}
+function avgGrowth(T){
+  const keys = Object.keys(S.snaps||{}).sort();
+  if (keys.length >= 2){
+    const a = keys[0], b = keys[keys.length-1], n = monthsBetween(a, b);
+    if (n >= 1) return (S.snaps[b].t - S.snaps[a].t) / n;
+  }
+  const cf = cashFlowByMonth(), ks = Object.keys(cf).sort();
+  if (!ks.length) return T.rendBRL > 0 ? T.rendBRL : null;
+  const span = Math.max(1, monthsBetween(ks[0], monthKey()) + 1);
+  return ks.reduce((a,k) => a + cf[k], 0) / span + T.rendBRL;
+}
+function forecast(T){
+  const falta = goalTotalBRL() - T.totalBRL;
+  if (falta <= 0) return { done:true, txt:'Meta do primeiro milhão batida!' };
+  const avg = avgGrowth(T);
+  if (!avg || avg <= 0) return { none:true, txt:'Registre os aportes no calendário para descobrir quando o milhão chega' };
+  const n = Math.ceil(falta / avg);
+  if (n > 600) return { none:true, txt:'O milhão ainda está longe no ritmo atual, cada aporte aproxima essa data' };
+  const k = addMonths(n);
+  return { n, key:k, label: monthName(k), avg, txt:'No ritmo atual, o primeiro milhão chega em ' + monthName(k) };
+}
+function storyHTML(T){
+  const vc = S.settings.view, p = T.totalBRL / goalTotalBRL() * 100, g = growthMonth(T), f = forecast(T);
+  if (f.done) return 'Vocês conquistaram o primeiro milhão! \u{1F389}';
+  let s = `Vocês já conquistaram <b>${pctFmt(p,0)}</b> do primeiro milhão`;
+  if (g > 0) s += ` e cresceram <b>${compact(fromBRL(g, vc), vc)}</b> este mês`;
+  s += '.';
+  if (f.key) s += ` No ritmo atual, ele chega em <b>${f.label}</b>.`;
+  return s;
+}
+
+/* Conquistas */
+function streak(){
+  const set = new Set(S.lancamentos.filter(l => l.imovelId || +l.valor > 0).map(l => l.data.slice(0,7)));
+  let n = 0; const d = new Date(); d.setDate(1);
+  if (!set.has(monthKey(d))) d.setMonth(d.getMonth()-1);
+  while (set.has(monthKey(d))){ n++; d.setMonth(d.getMonth()-1); }
+  return n;
+}
+const anyIm = fn => S.imoveis.some(im => fn(im, calcImovel(im)));
+const ACH = [
+  { id:'start', t:'Primeiro passo',   d:'Primeiro lançamento registrado',            i:'spark',  c:'yellow', ok:() => S.lancamentos.length > 0 },
+  { id:'t100',  t:'100 mil',          d:'Patrimônio total passou de R$ 100 mil',      i:'trend',  c:'teal',   ok:T => T.totalBRL >= 1e5 },
+  { id:'t250',  t:'250 mil',          d:'Patrimônio total passou de R$ 250 mil',      i:'trend',  c:'purple', ok:T => T.totalBRL >= 2.5e5 },
+  { id:'t500',  t:'Meio milhão',      d:'Patrimônio total passou de R$ 500 mil',      i:'trend',  c:'coral',  ok:T => T.totalBRL >= 5e5 },
+  { id:'t750',  t:'750 mil',          d:'Patrimônio total passou de R$ 750 mil',      i:'trend',  c:'blue',   ok:T => T.totalBRL >= 7.5e5 },
+  { id:'t1m',   t:'Primeiro milhão',  d:'O grande sonho realizado',                   i:'trophy', c:'yellow', ok:T => T.totalBRL >= 1e6 },
+  { id:'liq50', t:'Reserva de 50 mil',d:'Dinheiro em conta passou de R$ 50 mil',      i:'wallet', c:'teal',   ok:T => T.liquidoBRL >= 5e4 },
+  { id:'liq100',t:'Reserva de 100 mil',d:'Dinheiro em conta passou de R$ 100 mil',    i:'wallet', c:'blue',   ok:T => T.liquidoBRL >= 1e5 },
+  { id:'usd10', t:'Dolarizados',      d:'Mais de US$ 10 mil guardados em dólar',      i:'dollar', c:'teal',   ok:T => T.usd >= 1e4 },
+  { id:'half',  t:'Metade quitada',   d:'Um imóvel com metade do saldo devedor pago', i:'home',   c:'purple', ok:() => anyIm((im,k) => im.metodo==='mercado' && +im.saldoDevedorBase > 0 && k.saldoDev <= im.saldoDevedorBase/2) },
+  { id:'quit',  t:'Imóvel quitado',   d:'Primeiro imóvel totalmente quitado',         i:'home',   c:'coral',  ok:() => anyIm((im,k) => (im.metodo==='mercado' && +im.saldoDevedorBase > 0 && k.saldoDev <= 0) || (+im.parcelasTotal > 0 && k.restantes === 0)) },
+  { id:'p10',   t:'10 parcelas',      d:'10 parcelas pagas registradas no calendário',i:'cal',    c:'orange', ok:() => S.lancamentos.filter(l => l.imovelId).length >= 10 },
+  { id:'s3',    t:'Constância',       d:'3 meses seguidos com aportes',               i:'cal',    c:'teal',   ok:(T,st) => st >= 3 },
+  { id:'s6',    t:'Disciplina',       d:'6 meses seguidos com aportes',               i:'cal',    c:'purple', ok:(T,st) => st >= 6 },
+  { id:'s12',   t:'Um ano de foco',   d:'12 meses seguidos com aportes',              i:'trophy', c:'coral',  ok:(T,st) => st >= 12 },
+  { id:'cdi1k', t:'Renda passiva',    d:'Rendimento acima de R$ 1 mil por mês',       i:'trend',  c:'blue',   ok:T => T.rendBRL >= 1000 },
+  { id:'rec',   t:'Tudo em dia',      d:'Todos os valores a receber foram recebidos', i:'gift',   c:'orange', ok:() => S.receber.length > 0 && S.receber.every(r => calcRec(r).done) }
+];
+function checkAch(T){
+  S.settings.conquistas = S.settings.conquistas || {};
+  const C = S.settings.conquistas, st = streak(), novas = [];
+  ACH.forEach(a => { if (!C[a.id] && a.ok(T, st)){ C[a.id] = todayISO(); novas.push(a); } });
+  if (novas.length) setTimeout(() => { confetti(120); toast('\u{1F3C6} Conquista desbloqueada, ' + novas.map(a => a.t).join(', ')); }, 700);
+  return novas.length > 0;
+}
+function achCard(a){
+  const d = (S.settings.conquistas||{})[a.id];
+  return `<div class="ach ${d ? '' : 'locked'}">
+    <span class="ach-ic ${d ? 'bg-' + a.c : 'bg-cream'}">${ic(d ? a.i : 'lock')}</span>
+    <b>${a.t}</b><small>${a.d}</small>${d ? `<em>${fmtDate(d)}</em>` : ''}
+  </div>`;
+}
+
+/* Modo simples e privacidade */
+function togglePriv(){ S.settings.privado = !S.settings.privado; commit(); toast(S.settings.privado ? 'Valores escondidos' : 'Valores visíveis'); }
+function toggleSimple(){ S.settings.simples = !S.settings.simples; heroAnimated = false; commit(); window.scrollTo({ top:0, behavior:'smooth' }); }
+function forecastCard(T){
+  const f = forecast(T);
+  return `<div class="card forecast">
+    <span class="fc-ic bg-yellow">${ic('target','lg')}</span>
+    <div class="fc-t"><small>Previsão do primeiro milhão</small><b>${f.key ? f.label : f.done ? 'Meta batida! \u{1F389}' : 'Em breve'}</b><span>${f.key ? 'Mantendo o ritmo dos últimos meses' : esc(f.txt)}</span></div>
+    <button class="btn bg-yellow" onclick="openResumo()">${ic('share')}Resumo do mês</button>
+  </div>`;
+}
+function vSimple(T){
+  const vc = S.settings.view, cv = b => compact(fromBRL(b, vc), vc);
+  const g = growthMonth(T), C = S.settings.conquistas || {};
+  const got = ACH.filter(a => C[a.id]).sort((a,b) => C[a.id] < C[b.id] ? 1 : -1).slice(0,3);
+  return `
+  <div class="grid g-simple">
+    <div class="card big-tile"><span class="strip bg-coral"></span><small>Quanto temos</small><b class="num">${cv(T.totalBRL)}</b></div>
+    <div class="card big-tile"><span class="strip bg-yellow"></span><small>Quanto falta</small><b class="num">${cv(Math.max(0, goalTotalBRL() - T.totalBRL))}</b></div>
+    <div class="card big-tile"><span class="strip bg-teal"></span><small>Cresceu este mês</small><b class="num ${g < 0 ? 'neg' : ''}">${g > 0 ? '+' : ''}${cv(g)}</b></div>
+  </div>
+  ${forecastCard(T)}
+  ${got.length ? `<h3 class="sec">Últimas conquistas</h3><div class="grid g-ach">${got.map(achCard).join('')}</div>` : ''}
+  <div style="text-align:center;margin-top:26px"><button class="btn" onclick="toggleSimple()">${ic('eye')}Ver sistema completo</button></div>`;
+}
+
+/* Fotos */
+function photoField(val){
+  return `<div class="field"><label>Foto</label>
+    <div class="photo-pick">
+      <div class="photo-prev" id="phPrev" style="${val ? `background-image:url('${esc(val)}')` : ''}">${val ? '' : ic('camera','lg')}</div>
+      <div style="flex:1;min-width:0">
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/heic,image/heif" id="phFile" onchange="pickPhoto(this)" style="display:none">
+        <div class="row wrapr" style="gap:8px">
+          <button type="button" class="btn sm bg-yellow" onclick="$('#phFile').click()">${ic('camera')}Escolher foto</button>
+          <button type="button" class="btn sm" onclick="setPhoto('')">Remover</button>
+        </div>
+        <input id="f_foto" type="hidden" value="${esc(val||'')}">
+        <div class="hint" id="phHint">${GAS ? 'A foto fica salva no seu Google Drive' : 'Modo de teste, a foto fica só neste navegador'}</div>
+      </div>
+    </div></div>`;
+}
+function setPhoto(url){
+  $('#f_foto').value = url;
+  const p = $('#phPrev'); p.style.backgroundImage = url ? `url('${url}')` : ''; p.innerHTML = url ? '' : ic('camera','lg');
+}
+function pickPhoto(inp){
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const sc = Math.min(1, 1200 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const data = c.toDataURL('image/jpeg', .82);
+      setPhoto(data);
+      if (GAS){
+        $('#phHint').textContent = 'Enviando foto…';
+        google.script.run
+          .withSuccessHandler(url => { setPhoto(url); $('#phHint').textContent = 'Foto salva no Drive'; })
+          .withFailureHandler(() => { setPhoto(''); $('#phHint').textContent = 'Não consegui enviar a foto, tente de novo'; })
+          .uploadFoto(data, f.name);
+      }
+    };
+    img.src = r.result;
+  };
+  r.readAsDataURL(f);
+}
+function photoPending(){ const v = ($('#f_foto')||{}).value || ''; if (GAS && v.startsWith('data:')){ toast('Aguarde a foto terminar de enviar'); return true; } return false; }
+
+/* Nossa História */
+function vHis(T){
+  const C = S.settings.conquistas || {}, got = ACH.filter(a => C[a.id]).length;
+  const ev = [];
+  (S.historia || []).forEach(h => ev.push(Object.assign({ kind:'m' }, h)));
+  S.imoveis.forEach(im => { if (im.dataCompra) ev.push({ kind:'im', id:im.id, data:im.dataCompra, titulo:'Conquistamos ' + im.nome, texto:im.endereco || '', foto:im.foto, cor:im.cor }); });
+  ACH.forEach(a => { if (C[a.id]) ev.push({ kind:'a', data:C[a.id], titulo:a.t, texto:a.d, cor:a.c }); });
+  ev.sort((a,b) => a.data < b.data ? 1 : -1);
+  const icon = { m:'heart', im:'home', a:'trophy' }, tag = { m:'Momento', im:'Imóvel', a:'Conquista' };
+  return `
+  <div class="card his-head">
+    <span class="his-heart bg-coral">${ic('heart','lg')}</span>
+    <div style="flex:1;min-width:220px"><h2>Nossa História</h2><p>Cada parcela, cada aporte e cada conquista, construídos juntos.</p>
+      <div class="row wrapr" style="margin-top:10px;gap:8px"><span class="chip bg-yellow">${ic('trophy')} ${got} de ${ACH.length} conquistas</span><span class="chip">${ev.length} momentos</span></div></div>
+    <div class="row wrapr" style="gap:8px"><button class="btn bg-yellow" onclick="editMomento()">${ic('plus')}Novo momento</button><button class="btn" onclick="openResumo()">${ic('share')}Resumo do mês</button></div>
+  </div>
+
+  <h3 class="sec">Conquistas</h3>
+  <div class="grid g-ach">${ACH.map(achCard).join('')}</div>
+
+  <h3 class="sec">Linha do tempo</h3>
+  ${ev.length ? `<div class="tl">${ev.map(e => {
+    const click = e.kind === 'm' ? `onclick="editMomento('${e.id}')"` : e.kind === 'im' ? `onclick="openImovel('${e.id}')"` : '';
+    return `<div class="tl-item">
+      <span class="tl-dot bg-${e.cor || 'coral'}">${ic(icon[e.kind])}</span>
+      <div class="card tl-card ${click ? 'click' : ''}" ${click}>
+        ${e.foto ? `<div class="tl-img" style="background-image:url('${esc(e.foto)}')"></div>` : ''}
+        <div class="tl-body"><small>${fmtDate(e.data)} · ${tag[e.kind]}</small><b>${esc(e.titulo)}</b>${e.texto ? `<p>${esc(e.texto)}</p>` : ''}</div>
+      </div></div>`;
+  }).join('')}</div>`
+  : '<div class="empty">A história de vocês começa aqui. Adicione o primeiro momento, como o casamento, a compra da casa ou o primeiro aporte.</div>'}`;
+}
+function editMomento(id){
+  const ex = id ? (S.historia||[]).find(h => h.id === id) : null;
+  const h = ex || { data: todayISO(), titulo:'', texto:'', foto:'', cor:'coral' };
+  openModal(`
+    <div class="mhead bg-pink"><h3>${ex ? 'Editar momento' : 'Novo momento'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Título</label><input id="h_titulo" value="${esc(h.titulo)}" placeholder="Ex. Compramos nossa casa"></div>
+        <div class="field"><label>Data</label><input id="h_data" type="date" value="${h.data}"></div>
+      </div>
+      <div class="field"><label>Lembrança</label><textarea id="h_texto" rows="3" placeholder="O que esse momento significou para vocês">${esc(h.texto)}</textarea></div>
+      ${photoField(h.foto)}
+      <div class="field"><label>Cor</label><div class="row wrapr">${COLORS.map(c => `<button type="button" class="btn icon bg-${c} colorpick" data-c="${c}" style="width:36px;height:36px;${c===h.cor?'outline:3px solid var(--ink);outline-offset:2px':''}" onclick="pickColor(this)"></button>`).join('')}</div><input type="hidden" id="f_cor" value="${h.cor}"></div>
+    </div>
+    <div class="mfoot">
+      ${ex ? `<button class="btn bg-pink" onclick="delMomento('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn bg-teal" onclick="saveMomento('${ex ? ex.id : ''}')">${ic('heart')}Salvar momento</button>
+    </div>`);
+}
+function saveMomento(id){
+  const titulo = $('#h_titulo').value.trim(); if (!titulo){ toast('Dê um título ao momento'); return; }
+  if (photoPending()) return;
+  S.historia = S.historia || [];
+  const obj = { titulo, data: $('#h_data').value || todayISO(), texto: $('#h_texto').value.trim(), foto: $('#f_foto').value, cor: $('#f_cor').value };
+  if (id) Object.assign(S.historia.find(h => h.id === id), obj); else { obj.id = uid('h'); S.historia.push(obj); }
+  closeModal(); commit(); toast('Momento guardado ❤️');
+}
+function delMomento(id){
+  if (!confirm('Excluir este momento?')) return;
+  S.historia = S.historia.filter(h => h.id !== id); closeModal(); commit();
+}
+
+/* Resumo do mês para compartilhar */
+let RESUMO_TXT = '';
+function openResumo(){
+  const T = totals(), vc = S.settings.view, k = monthKey(), C = S.settings.conquistas || {};
+  const g = growthMonth(T), f = forecast(T), p = T.totalBRL / goalTotalBRL() * 100;
+  const pay = S.lancamentos.filter(l => l.imovelId && l.data.startsWith(k)).reduce((a,l) => a + Math.abs(lancBRL(l)), 0);
+  const ach = ACH.filter(a => C[a.id] && C[a.id].startsWith(k));
+  const cv = b => compact(fromBRL(b, vc), vc), cvR = b => compact(fromBRL(b, vc), vc, true);
+  RESUMO_TXT = ['✨ Resumo de ' + monthName(k), '',
+    'Patrimônio total ' + cvR(T.totalBRL),
+    g > 0 ? 'Crescemos ' + cvR(g) + ' este mês' : null,
+    pay > 0 ? 'Investimos ' + cvR(pay) + ' em imóveis' : null,
+    'Já são ' + pctFmt(p,0) + ' do primeiro milhão',
+    f.key ? 'No ritmo atual, chegamos lá em ' + f.label : null,
+    ach.length ? '\u{1F3C6} ' + ach.map(a => a.t).join(', ') : null,
+    '', 'Gestão de Capital · Andrey Marques'].filter(x => x !== null).join('\n');
+  const tile = (l, v, c) => `<div class="r-tile"><small>${l}</small><b class="num ${c||''}">${v}</b></div>`;
+  openModal(`
+    <div class="mhead bg-yellow"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Resumo do mês</small><h3 style="text-transform:capitalize">${monthName(k)}</h3></div>
+      <button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="resumo">
+        <span class="kicker">${IC.spark} ${monthName(k)}</span>
+        <div class="r-big num">${cv(T.totalBRL)}</div>
+        <div class="r-sub">patrimônio total de vocês</div>
+        <div class="pbar" style="height:16px;margin-top:14px"><i class="bg-coral" style="width:${Math.min(100, Math.max(0,p))}%"></i></div>
+        <div class="r-sub mono" style="margin-top:6px">${pctFmt(p,0)} do primeiro milhão</div>
+        <div class="r-grid">
+          ${tile('Cresceram', (g > 0 ? '+' : '') + cv(g), g < 0 ? 'neg' : '')}
+          ${tile('Em imóveis', cv(pay))}
+          ${tile('Milhão previsto', f.key ? f.label : f.done ? 'Batido!' : 'Em breve')}
+        </div>
+        ${ach.length ? `<div class="r-ach">\u{1F3C6} ${ach.map(a => a.t).join(', ')}</div>` : ''}
+        <div class="r-love">Gestão de Capital · Andrey Marques</div>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="copyResumo()">Copiar texto</button>
+      <a class="btn bg-teal" href="https://wa.me/?text=${encodeURIComponent(RESUMO_TXT)}" target="_blank" rel="noopener">${ic('share')}Enviar no WhatsApp</a>
+    </div>`);
+}
+function copyResumo(){
+  const fb = () => { const a = document.createElement('textarea'); a.value = RESUMO_TXT; document.body.appendChild(a); a.select();
+    try { document.execCommand('copy'); toast('Texto copiado'); } catch(e){ toast('Não consegui copiar'); } a.remove(); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(RESUMO_TXT).then(() => toast('Texto copiado')).catch(fb); else fb();
+}
+
+function vSob(){
+  const row = (k, v) => `<div class="kv sob-kv"><span>${k}</span><b>${v}</b></div>`;
+  return `
+  <div class="card sob-hero">
+    <span class="logo sob-logo">${IC.spark}</span>
+    <div>
+      <small>Sobre o sistema</small>
+      <h2>Gestão de Capital</h2>
+      <p>Personal Capital Management</p>
+    </div>
+  </div>
+  <div class="grid sob-grid">
+    <div class="card">
+      <div class="mhead bg-yellow"><h3>Informações</h3></div>
+      <div class="mbody">
+        ${row('Versão', VERSION)}
+        ${row('Ambiente', GAS ? 'Produção' : 'Teste local')}
+        ${row('Última atualização', LAST_UPDATE)}
+        ${row('Desenvolvimento', 'Andrey Marques')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="mhead bg-teal"><h3>Fontes de dados</h3></div>
+      <div class="mbody">
+        ${row('Dólar comercial', 'AwesomeAPI')}
+        ${row('CDI', 'Banco Central do Brasil')}
+        ${row('Armazenamento', 'Google Planilhas')}
+        ${row('Fotos', 'Google Drive')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="mhead bg-purple"><h3>O que o sistema faz</h3></div>
+      <div class="mbody sob-txt">
+        <p>Organiza contas em real e dólar, imóveis, parcelas, valores a receber e metas de patrimônio em um só lugar.</p>
+        <p>Os valores são convertidos pela cotação do dia e o rendimento é estimado com base no CDI atual.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="mhead bg-pink"><h3>Aviso</h3></div>
+      <div class="mbody sob-txt">
+        <p>© 2026 Andrey Marques. All rights reserved.</p>
+        <p>For personal financial management and record-keeping purposes only. Projeções e estimativas não são garantia de resultado.</p>
+      </div>
+    </div>
+  </div>`;
+}
+const VIEWS = { dash: vDash, his: vHis, cal: vCal, pat: vPat, rec: vRec, wal: vWal, cfg: vCfg, sob: vSob };
+
+/* ================== INÍCIO ================== */
+loadMarket();
+loadAll();
+setInterval(() => refreshQuiet(), 30 * 60 * 1000);
+function refreshQuiet(){ if (GAS) google.script.run.withSuccessHandler(applyMarket).getMarket(); else clientMarket(); }
+</script>
+</body>
+</html>

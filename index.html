@@ -481,11 +481,11 @@ body.priv .bar .runner{left:2%!important}
 .sob-txt p{color:var(--muted);line-height:1.7;margin-bottom:10px}
 
 /* rodapé no vazio, com a borda líquida */
-.foot{margin-top:90px;background:#FFB045;border-radius:120px 40px 0 0;padding:26px 28px 30px;display:flex;align-items:center;justify-content:center;gap:22px;font-size:12px;color:rgba(255,255,255,.82);line-height:1.7;transition:color .35s}
-.foot-txt{text-align:left}
+.foot{margin-top:90px;background:#FFB045;border-radius:60px 40px 0 0;padding:16px max(28px,calc((100% - 1180px)/2)) 18px;display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:12px;color:rgba(255,255,255,.82);line-height:1.6;transition:color .35s}
+.foot-txt{text-align:right}
 .foot p:nth-of-type(1){color:#fff;font-weight:700;transition:color .35s}
-.foot-vid{display:block;width:104px;height:104px;flex-shrink:0;object-fit:cover;pointer-events:none;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
-.foot-ct{display:flex;align-items:center;gap:10px;margin-top:8px}
+.foot-vid{display:block;width:96px;height:96px;flex-shrink:0;object-fit:cover;pointer-events:none;-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+.foot-ct{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:6px}
 .foot-ct span{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.8}
 .foot-ct a{color:inherit;font-weight:800;font-size:13px;text-decoration:none;border:1.5px solid currentColor;border-radius:999px;padding:5px 14px;transition:background .25s,color .25s}
 .foot-ct a:hover{background:#fff;color:#000;border-color:#fff}
@@ -592,11 +592,10 @@ body.locked .liquid,body.locked .void{display:none}
   .day .dv{display:none}
   .tl-img{width:100%}
   h3.sec{font-size:24px;margin-top:40px}
-  .foot{border-radius:70px 26px 0 0}
-  .foot{flex-direction:column;gap:6px;padding:22px 20px 28px}
-  .foot-txt{text-align:center}
-  .foot-ct{justify-content:center}
-  .foot-vid{width:92px;height:92px}
+  .foot{border-radius:40px 26px 0 0}
+  .foot{gap:12px;padding:14px 18px 16px 22px;font-size:10.5px;line-height:1.5}
+  .foot-vid{width:72px;height:72px}
+  .foot-ct a{font-size:12px;padding:4px 12px}
 }
 </style>
 <script>
@@ -659,7 +658,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.5.2';
+const VERSION = 'v3.5.3';
 const LAST_UPDATE = 'Outubro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.

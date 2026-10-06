@@ -107,7 +107,7 @@ main#view>*{animation:slideup .8s var(--ease) both}
 .brand .nv-mark{height:38px;color:#000;display:none}
 .brand-sep{width:1.5px;height:34px;background:rgba(0,0,0,.25);border-radius:2px}
 @media (max-width:640px){.brand .nv-full{height:34px}}
-.ct-logo{height:54px;color:var(--shout);margin:0 auto 22px;background-position:center;-webkit-mask-position:center;mask-position:center}
+.ct-logo{height:64px;color:var(--shout);margin:0 auto 6px;background-position:center;-webkit-mask-position:center;mask-position:center}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:40px;height:40px;border-radius:50%;background:#000;display:grid;place-items:center;flex-shrink:0}
 .logo svg{width:20px;height:20px;fill:var(--shout)}
@@ -653,7 +653,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.5.0';
+const VERSION = 'v3.5.1';
 const LAST_UPDATE = 'Outubro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -1108,7 +1108,6 @@ function showConta(aba){
   <div class="ct-wrap">
   <div class="lock-box card ct-box">
     <span class="nv nv-full ct-logo" role="img" aria-label="Nectar Ventures"></span>
-    <h1 class="ct-title">Gestão de <span>Capital</span></h1>
     <div class="ct-kicker">${LT('kicker')}</div>
     <div class="seg lock-seg"><button class="${novo?'':'on'}" onclick="showConta('entrar')">${LT('tabIn')}</button><button class="${novo?'on':''}" onclick="showConta('criar')">${LT('tabUp')}</button></div>
     <p class="ct-lead">${novo ? LT('leadUp') : LT('leadIn')}</p>

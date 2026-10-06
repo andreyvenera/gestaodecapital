@@ -1014,6 +1014,7 @@ function salvarPin(){
     .trocarPin(a, n, TOKEN);
 }
 function loadAll(){
+  if (MULTI && !TOKEN) return showConta(USUARIO ? 'entrar' : 'criar');
   if (GAS){
     google.script.run
       .withSuccessHandler(raw => { hideLock(); S = hydrate(raw); renderAll(); })

@@ -479,6 +479,7 @@ body.locked .liquid,body.locked .void{display:none}
 .lock-box h1{font-size:30px;font-weight:900;letter-spacing:-.05em}
 .lock-box p{color:var(--muted);margin:8px 0 22px;line-height:1.6}
 .lock-box input{text-align:center;font-size:26px;font-weight:800;letter-spacing:.4em;padding:16px;background:var(--deep)}
+.lock-box input::placeholder{letter-spacing:.02em;font-size:16px;font-weight:600}
 .lock-btn{width:100%;margin-top:14px;padding:15px;font-size:15px}
 .lock-msg{min-height:20px;margin-top:14px;font-weight:600;color:var(--neg);font-size:13px}
 
@@ -578,7 +579,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.2.0';
+const VERSION = 'v3.2.1';
 const LAST_UPDATE = 'Outubro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -948,7 +949,7 @@ function contaEnviar(){
       $('#ctPin').value = '';
       msg.textContent = (r && r.erro) || (r && r.bloqueado ? 'Muitas tentativas. Aguarde 10 minutos.' : 'Usuário ou PIN incorreto');
     })
-    .withFailureHandler(() => { btn.disabled = false; btn.textContent = txt; msg.textContent = 'Não consegui conectar agora, tente de novo'; })
+    .withFailureHandler(e => { btn.disabled = false; btn.textContent = txt; const m = e && e.message || ''; msg.textContent = (!m || /fetch|network|load failed/i.test(m)) ? 'Não consegui conectar agora, tente de novo' : 'Erro no servidor: ' + m; })
     [novo ? 'criarConta' : 'entrarConta'](u, pin);
 }
 function hideLock(){ document.body.classList.remove('locked'); const el = document.getElementById('lock'); if (el) el.remove(); }

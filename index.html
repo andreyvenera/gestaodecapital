@@ -478,12 +478,15 @@ body.priv .bar .runner{left:2%!important}
 
 /* sobre */
 .sob-hero{display:flex;align-items:center;gap:22px;padding:34px;margin-bottom:16px;flex-wrap:wrap;background:var(--shout)!important;color:#000;border-color:var(--shout);border-radius:40px 40px 120px 40px}
-.sob-logo{width:72px;height:72px;border-radius:50%;background:#000;display:grid;place-items:center}
-.sob-logo svg{width:32px;height:32px;fill:var(--shout)}
+.sob-hero .sob-nv{height:64px;color:#000}
+.sob-ht{border-left:2px solid rgba(0,0,0,.18);padding-left:22px}
+.sob-link{color:var(--shout);text-decoration:none;border-bottom:1.5px solid currentColor}
+.sob-link:hover{opacity:.8}
 .sob-hero small{display:block;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.55}
-.sob-hero h2{font-size:clamp(36px,5vw,60px);font-weight:900;letter-spacing:-.06em;line-height:.95;margin-top:6px}
+.sob-hero h2{font-size:clamp(26px,3.4vw,40px);font-weight:900;letter-spacing:-.05em;line-height:1;margin-top:6px}
 .sob-hero p{font-weight:600;opacity:.6;margin-top:6px}
-.sob-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.sob-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:760px){.sob-grid{grid-template-columns:1fr}.sob-ht{border-left:0;padding-left:0}.sob-hero .sob-nv{height:50px}}
 .sob-kv{padding:11px 0;border-bottom:1px solid var(--line)}
 .sob-kv:last-child{border-bottom:0}
 .sob-txt p{color:var(--muted);line-height:1.7;margin-bottom:10px}
@@ -659,7 +662,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.6.2';
+const VERSION = 'v3.6.3';
 const LAST_UPDATE = 'Outubro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -2847,11 +2850,11 @@ function vSob(){
   const row = (k, v) => `<div class="kv sob-kv"><span>${k}</span><b>${v}</b></div>`;
   return `
   <div class="card sob-hero">
-    <span class="logo sob-logo">${IC.spark}</span>
-    <div>
+    <span class="nv nv-full sob-nv" role="img" aria-label="Nectar Ventures"></span>
+    <div class="sob-ht">
       <small>Sobre o sistema</small>
-      <h2>Gestão de <span class="outline">Capital</span></h2>
-      <p>Personal Capital Management</p>
+      <h2>Gestão de patrimônio pessoal</h2>
+      <p>Contas, imóveis, parcelas e metas em um só lugar.</p>
     </div>
   </div>
   <div class="grid sob-grid">
@@ -2859,32 +2862,35 @@ function vSob(){
       <div class="mhead bg-yellow"><h3>Informações</h3></div>
       <div class="mbody">
         ${row('Versão', VERSION)}
-        ${row('Ambiente', GAS ? 'Produção' : 'Teste local')}
         ${row('Última atualização', LAST_UPDATE)}
+        ${row('Ambiente', GAS ? 'Online' : 'Teste local')}
+        ${row('Marca', 'Nectar Ventures')}
         ${row('Desenvolvimento', 'Andrey Marques')}
+        ${row('Contato', '<a href="https://amarques.xyz/" target="_blank" rel="noopener" class="sob-link">amarques.xyz</a>')}
       </div>
     </div>
     <div class="card">
       <div class="mhead bg-teal"><h3>Fontes de dados</h3></div>
       <div class="mbody">
-        ${row('Dólar comercial', 'AwesomeAPI')}
+        ${row('Cotação das moedas', 'AwesomeAPI')}
+        ${row('Cotação reserva', 'ExchangeRate API')}
         ${row('CDI', 'Banco Central do Brasil')}
-        ${row('Armazenamento', 'Google Planilhas')}
-        ${row('Fotos', 'Google Drive')}
+        ${row('Moedas disponíveis', CUR_KEYS.length)}
+        ${row('Atualização', 'A cada 30 minutos')}
       </div>
     </div>
     <div class="card">
       <div class="mhead bg-purple"><h3>O que o sistema faz</h3></div>
       <div class="mbody sob-txt">
-        <p>Organiza contas em real e dólar, imóveis, parcelas, valores a receber e metas de patrimônio em um só lugar.</p>
-        <p>Os valores são convertidos pela cotação do dia e o rendimento é estimado com base no CDI atual.</p>
+        <p>Organiza contas em ${CUR_KEYS.length} moedas, imóveis, parcelas, valores a receber e metas de patrimônio em um só lugar.</p>
+        <p>Os valores são convertidos pela cotação do dia, o rendimento é estimado pelo CDI atual e o modo privado esconde todos os números com um toque.</p>
       </div>
     </div>
     <div class="card">
       <div class="mhead bg-pink"><h3>Aviso</h3></div>
       <div class="mbody sob-txt">
-        <p>© 2026 Andrey Marques. All rights reserved.</p>
-        <p>For personal financial management and record-keeping purposes only. Projeções e estimativas não são garantia de resultado.</p>
+        <p>Sistema para gestão financeira pessoal e controle de registros. Projeções e estimativas não são garantia de resultado.</p>
+        <p>© 2026 Andrey Marques. Todos os direitos reservados.</p>
       </div>
     </div>
   </div>`;

@@ -602,6 +602,8 @@ body.locked .liquid,body.locked .void{display:none}
 .bal-big small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin-bottom:4px}
 .bal-big b{font-size:15px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bal-big .bg-yellow b{color:#000}
+.bal-big em{display:block;font-style:normal;font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bal-big .bg-yellow em{color:rgba(0,0,0,.6)}
 .bal-rows{margin-top:14px}
 .bal-rows .kv,.bal-proj .kv{padding:8px 0;border-bottom:1px solid var(--line);align-items:center}
 .bal-rows .kv:last-child{border-bottom:0}
@@ -736,7 +738,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.8.2';
+const VERSION = 'v3.8.3';
 const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -1995,7 +1997,8 @@ function balancoMes(key){
   const occ = fixosDoMes(key);
   const P = { prev:0, feito:0, falta:0, n:0, ok:0 }, R = { prev:0, feito:0, falta:0, n:0, ok:0 };
   occ.forEach(o => { const X = o.rec ? R : P; X.n++; X.prev += o.prevBRL; if (o.l){ X.ok++; X.feito += o.feitoBRL; } else X.falta += o.prevBRL; });
-  return { key, ent, sai, res: ent - sai, occ, P, R, var: variacaoSaldo(key) };
+  const entPrev = ent + R.falta, saiPrev = sai + P.falta;
+  return { key, ent, sai, res: ent - sai, entPrev, saiPrev, resPrev: entPrev - saiPrev, occ, P, R, var: variacaoSaldo(key) };
 }
 /* Quanto o dinheiro em conta mudou no mês, pelos saldos atualizados (pega tudo, até o que não foi lançado) */
 function variacaoSaldo(key){
@@ -2052,9 +2055,9 @@ function mesCard(T){
   const temFixos = (S.fixos || []).length;
   return `<div class="card mes">
     <div class="mes-h">
-      <div class="mes-t"><small>Balanço de ${MONTHS[m]}</small>
-        <b class="num ${B.res >= 0 ? 'pos' : 'neg'}">${B.res > 0 ? '+' : ''}${money(B.res)}</b>
-        <span>Entrou <b class="num pos">${money(B.ent)}</b> · Saiu <b class="num neg">${money(B.sai)}</b></span></div>
+      <div class="mes-t"><small>Resultado previsto de ${MONTHS[m]}</small>
+        <b class="num ${B.resPrev >= 0 ? 'pos' : 'neg'}">${B.resPrev > 0 ? '+' : ''}${money(B.resPrev)}</b>
+        <span>Entradas <b class="num pos">${money(B.entPrev)}</b> · Saídas <b class="num neg">${money(B.saiPrev)}</b> · até agora <b class="num">${B.res > 0 ? '+' : ''}${money(B.res)}</b></span></div>
       <div class="mes-act">
         <button class="btn sm" onclick="openFixos()">${ic('edit')}Contas fixas</button>
         <button class="btn sm" onclick="openAtualizarSaldos()">${ic('refresh')}Atualizar saldos</button>
@@ -2089,10 +2092,11 @@ function mesBloco(T){
     <div class="card pad bal">
       <b>Balanço de ${MONTHS[cal.m]}</b>
       <div class="bal-big">
-        <div><small class="dot-l teal">Entrou</small><b class="num pos">${money(B.ent)}</b></div>
-        <div><small class="dot-l coral">Saiu</small><b class="num neg">${money(B.sai)}</b></div>
-        <div class="bg-yellow"><small>Resultado</small><b class="num">${B.res > 0 ? '+' : ''}${money(B.res)}</b></div>
+        <div><small class="dot-l teal">Entradas</small><b class="num pos">${money(B.entPrev)}</b><em class="num">${B.ent ? 'já entrou ' + money(B.ent) : 'nada recebido ainda'}</em></div>
+        <div><small class="dot-l coral">Saídas</small><b class="num neg">${money(B.saiPrev)}</b><em class="num">${B.sai ? 'já saiu ' + money(B.sai) : 'nada pago ainda'}</em></div>
+        <div class="bg-yellow"><small>Resultado</small><b class="num">${B.resPrev > 0 ? '+' : ''}${money(B.resPrev)}</b><em class="num">até agora ${B.res > 0 ? '+' : ''}${money(B.res)}</em></div>
       </div>
+      <div class="hint" style="margin-top:8px">Soma o que já foi lançado com as contas fixas que ainda faltam pagar e receber. Cada vez que você toca em Pagar ou Receber, o valor passa para "já".</div>
       <div class="bal-rows">
         ${B.occ.length ? `
         <div class="kv"><span>Contas pagas</span><b class="num">${money(B.P.feito)} <small class="muted">de ${money(B.P.prev)}</small></b></div>

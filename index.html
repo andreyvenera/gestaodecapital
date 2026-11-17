@@ -564,6 +564,80 @@ body.locked .liquid,body.locked .void{display:none}
 #fatal pre{background:#000!important;color:#fff;border:0!important;border-radius:14px!important}
 
 /* ---------- responsivo ---------- */
+/* Contas do mês e balanço */
+.mes{padding:24px;margin:18px 0}
+.mes-h{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.mes-t small{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mes-t>b{display:block;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.1;margin:6px 0 4px}
+.mes-t span{font-size:13px;color:var(--muted)}
+.mes-t span b{font-weight:700}
+.mes-act{display:flex;gap:8px;flex-wrap:wrap}
+.mes-prog{margin:18px 0 4px;font-size:13px;color:var(--muted)}
+.bar-s{height:8px;border-radius:99px;background:var(--deep);margin-top:8px;overflow:hidden}
+.bar-s i{display:block;height:100%;border-radius:99px;background:var(--pos);transition:width .8s var(--ease)}
+.mes-ok{margin-top:14px;padding:14px 16px;border-radius:18px;background:rgba(74,222,128,.08);color:var(--pos);font-weight:600;font-size:13px}
+.mes-grid{grid-template-columns:1.35fr 1fr;gap:16px;margin-top:18px;align-items:start}
+.sub-h{display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+.sub-h .num{letter-spacing:0;font-size:12px}
+.occ .dt{background:rgba(255,122,102,.12)}
+.occ .dt b{color:var(--coral)}
+.occ .dt.dt-rec{background:rgba(96,165,250,.12)}
+.occ .dt.dt-rec b{color:var(--blue)}
+.occ.st-ok .dt{background:rgba(74,222,128,.1)}
+.occ.st-ok .dt b{color:var(--pos)}
+.occ .m{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.occ .chip{padding:3px 9px;font-size:10px}
+.chip .ic svg{width:12px;height:12px}
+.chip.st-late{background:rgba(248,113,113,.15);color:var(--neg)}
+.chip.st-today{background:var(--shout);color:#000}
+.bal>b:first-child{display:block;margin-bottom:12px}
+.mes-grid>*{min-width:0}
+.val-m{display:none;font-weight:700;font-size:12px}
+.def-val{color:var(--shout);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.bal-warn{color:var(--orange)!important}
+.bal-warn a{color:var(--shout)}
+.bal-big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bal-big div{background:var(--deep);border-radius:20px;padding:12px 14px;min-width:0}
+.bal-big div.bg-yellow{background:var(--shout)!important;color:#000}
+.bal-big small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin-bottom:4px}
+.bal-big b{font-size:15px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bal-big .bg-yellow b{color:#000}
+.bal-rows{margin-top:14px}
+.bal-rows .kv,.bal-proj .kv{padding:8px 0;border-bottom:1px solid var(--line);align-items:center}
+.bal-rows .kv:last-child{border-bottom:0}
+.bal-rows small{font-weight:500}
+.bal-proj{margin-top:14px;padding:14px 16px;border-radius:20px;background:var(--deep)}
+.bal-proj .kv:nth-child(2){border-bottom:0}
+.bal-proj p{font-size:13px;line-height:1.6;color:var(--muted);margin-top:8px}
+.bal-proj p b{color:#fff}
+.day.due{box-shadow:inset 0 0 0 1.5px rgba(255,122,102,.55)}
+.day.due-late{box-shadow:inset 0 0 0 2px var(--neg)}
+.day.today.due,.day.today.due-late{box-shadow:inset 0 0 0 2px var(--shout)}
+.day .dv-due{color:var(--coral);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+.day.sel .dv-due{color:#000}
+.lem .dt-lem{background:rgba(254,197,4,.14);color:var(--shout)}
+.lem.feito .dt-lem{background:rgba(74,222,128,.1);color:var(--pos)}
+.as-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.as-n{display:flex;align-items:center;gap:10px;font-weight:600;min-width:0}
+.as-n i{width:10px;height:10px;border-radius:50%;flex-shrink:0;background:var(--acc)}
+.as-in{display:flex;align-items:center;gap:8px;background:var(--deep);border-radius:999px;padding:0 6px 0 14px;width:170px;flex-shrink:0}
+.as-in span{font-size:12px;color:var(--muted);font-weight:700}
+.as-in input{background:transparent!important;border:0!important;padding:10px 8px!important;text-align:right;font-weight:700;width:100%;min-width:0}
+.comp-pick{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.comp-st{font-size:12px;color:var(--muted)}
+.comp-st a{color:var(--shout)}
+.wa-card{display:flex;align-items:center;gap:14px;padding:18px 22px;margin-bottom:18px;flex-wrap:wrap}
+.wa-ic{width:46px;height:46px;border-radius:50%;background:#25D366;display:grid;place-items:center;flex-shrink:0}
+.wa-ic svg{width:24px;height:24px;fill:#fff}
+.wa-t{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}
+.wa-t b{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.wa-t span{font-size:13px;color:var(--muted)}
+.btn.wa-btn{background:#25D366!important;color:#06240f;border:0;font-weight:800}
+.btn.wa-btn svg{width:18px;height:18px;fill:currentColor;stroke:none}
+.btn.wa-btn:hover{background:#1ebe5b!important}
+.wa-prev{background:#0b141a;color:#e9edef;border-radius:14px 14px 14px 4px;padding:14px 16px;font-size:15px;line-height:1.6;border:1px solid #1f2c33}
+@media (max-width:980px){.mes-grid{grid-template-columns:1fr}}
+@media (max-width:620px){.occ>.val{display:none}.occ .val-m{display:inline}.occ{gap:10px}.occ .dt{min-width:46px;height:46px}.mes{padding:20px}.mes-t>b{font-size:28px}.bal-big{grid-template-columns:1fr 1fr}.bal-big div.bg-yellow{grid-column:1/-1}.as-in{width:140px}.mes-act .btn{flex:1}}
 @media (max-width:980px){
   .hero{grid-template-columns:1fr;min-height:0;gap:30px}
   .hero-r{min-height:0;padding:20px 0 40px}
@@ -662,8 +736,8 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.6.3';
-const LAST_UPDATE = 'Outubro 2026';
+const VERSION = 'v3.8.1';
+const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
    Vazio: dentro do Apps Script usa a planilha direto, fora dele salva só neste navegador. */
@@ -732,6 +806,10 @@ const IC = {
   share:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg>',
   eyeoff:'<svg viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 5.1A10.5 10.5 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.8-1.3"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
   logout:'<svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>',
+  check:'<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  clip:'<svg viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7-7l8.5-8.5a3.4 3.4 0 0 1 4.8 4.8l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4L15 7.3"/></svg>',
+  bell:'<svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg>',
+  wa:'<svg viewBox="0 0 24 24" class="wa-svg"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>',
   coin:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>'
 };
 const ic = (n, cls='') => `<span class="ic ${cls}">${IC[n]}</span>`;
@@ -752,6 +830,7 @@ const DEFAULT = {
   lancamentos: [],
   historia: [],
   saldos: [],
+  fixos: [],
   snaps: {}
 };
 /* Saldos anteriores informados pelo Andrey, carregados uma única vez */
@@ -960,13 +1039,41 @@ function hydrate(raw){
   out.settings.marcos = out.settings.marcos || {};
   if (!Array.isArray(out.settings.moedas)) out.settings.moedas = ['BRL','USD'];
   if (!out.snaps || typeof out.snaps !== 'object' || Array.isArray(out.snaps)) out.snaps = {};
-  ['contas','imoveis','receber','lancamentos','historia','saldos'].forEach(k => { if (!Array.isArray(out[k])) out[k] = clone(DEFAULT[k]); });
+  ['contas','imoveis','receber','lancamentos','historia','saldos','fixos'].forEach(k => { if (!Array.isArray(out[k])) out[k] = clone(DEFAULT[k]); });
   if (!out.settings.seedSaldos && SEED_SALDOS.length){
     SEED_SALDOS.forEach((x,i) => { if (!out.saldos.some(y => y.data === x.data)) out.saldos.push(Object.assign({ id:'sd_seed' + i }, clone(x))); });
     out.settings.seedSaldos = 1;
     setTimeout(() => persist(), 1500);
   }
+  if (!out.settings.seedFixos){ seedFixos(out); out.settings.seedFixos = 1; setTimeout(() => persist(), 1500); }
+  if (!Array.isArray(out.settings.saldoDias)) out.settings.saldoDias = [];
   return out;
+}
+/* Primeira vez: cria as contas do mês a partir dos imóveis que ainda estão sendo pagos */
+function seedFixos(out){
+  const diaComum = ls => { const c = {}; ls.forEach(l => { const d = +l.data.slice(8); c[d] = (c[d] || 0) + 1; }); const k = Object.keys(c).sort((a,b) => c[b] - c[a])[0]; return k ? +k : 10; };
+  const ini = (() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); })();
+  out.imoveis.forEach(im => {
+    const pagando = im.metodo === 'aportes' || +im.saldoDevedorBase > 0;
+    if (!pagando || out.fixos.some(f => f.imovelId === im.id)) return;
+    const ls = out.lancamentos.filter(l => l.imovelId === im.id).sort((a,b) => a.data < b.data ? 1 : -1);
+    out.fixos.push({ id: uid('fx'), nome: 'Parcela ' + im.nome, tipo:'pagar', valor: +im.parcelaValor || (ls[0] ? Math.abs(+ls[0].valor) : 0),
+      moeda: im.moeda || 'BRL', dia: ls.length ? diaComum(ls) : 10, contaId: ls[0] ? ls[0].contaId : '', imovelId: im.id, inicio: ini, fim: '' });
+  });
+  if (USUARIO === 'admin'){
+    const usd = (out.contas.find(c => c.id === 'c_usd') || out.contas.find(c => c.moeda === 'USD') || {}).id || '';
+    const extra = [
+      { nome:'Parcela Nova residência', tipo:'pagar', valor:0, moeda:'BRL', dia:10, contaId:'', imovelId:'', inicio:'2027-01', fim:'' },
+      { nome:'Aluguel Casa Jarivatuba', tipo:'receber', valor:0, moeda:'BRL', dia:10, contaId:'', imovelId:'', inicio: ini, fim:'' },
+      { nome:'Invoice Chaser · dia 15', tipo:'receber', valor:1400, moeda:'USD', dia:20, contaId: usd, imovelId:'', inicio: ini, fim:'' },
+      { nome:'Invoice Chaser · dia 30', tipo:'receber', valor:1400, moeda:'USD', dia:5, contaId: usd, imovelId:'', inicio: ini, fim:'' }
+    ];
+    extra.forEach(x => { if (!out.fixos.some(f => f.nome === x.nome)) out.fixos.push(Object.assign({ id: uid('fx') }, x)); });
+    out.settings.saldoDias = [5, 20];
+    /* Saldos que você mandou no grupo do WhatsApp */
+    [['2026-10-02', { BRL:74200, USD:8232 }, {}], ['2026-10-20', { BRL:82163, USD:13275 }, { USD:5.0502 }], ['2026-11-06', { BRL:90904, USD:10455 }, { USD:5.4682 }]]
+      .forEach(([data, valores, taxas]) => { if (!out.saldos.some(x => x.data === data)) out.saldos.push({ id: uid('sd'), data, valores, taxas }); });
+  }
 }
 /* ================== ACESSO COM PIN ================== */
 const MULTI = true;
@@ -1613,6 +1720,7 @@ function lancItem(l, withDel){
     <div class="main"><div class="t">${esc(l.desc || 'Lançamento')}</div>
       <div class="m">${esc(c.nome)}${op ? ' · <span class="tag">' + esc(op) + '</span>' : ''}${lancHistorico(l) ? ' · <span class="tag" title="Já estava no saldo confirmado">histórico</span>' : ''}</div></div>
     <div class="val num ${l.valor >= 0 ? 'pos' : 'neg'}">${l.valor >= 0 ? '+' : ''}${money(l.valor, c.moeda)}</div>
+    ${l.comprovante ? `<button class="btn sm icon" title="Ver comprovante" onclick="event.stopPropagation();verComp('${l.id}')">${ic('clip')}</button>` : ''}
     ${withDel ? `<button class="btn sm icon" title="Editar" onclick="openLanc({id:'${l.id}'})">${ic('edit')}</button>` : ''}
   </div>`;
 }
@@ -1635,6 +1743,8 @@ function vDash(T){
     ${stat('Rendimento Mensal', cv(T.rendBRL), '', 'blue', 'trend',
         'CDI ' + pctFmt(cdiAA(),2,true) + ' ao ano' + (brlPct.length ? ', ' + brlPct.join(', ') + '% do CDI' : '') + '. No ano daria ' + money(fromBRL(T.rendBRL*12, vc), vc))}
   </div>
+
+  ${mesCard(T)}
 
   ${evoCard(T)}
 
@@ -1689,7 +1799,8 @@ function vDash(T){
 }
 
 /* ---------- CALENDÁRIO ---------- */
-function vCal(){
+function vCal(T){
+  T = T || totals();
   const y = cal.y, m = cal.m;
   const first = new Date(y, m, 1).getDay(), days = new Date(y, m+1, 0).getDate();
   const key = y + '-' + pad(m+1);
@@ -1699,6 +1810,9 @@ function vCal(){
   const dueDay = {};
   S.receber.forEach(r => { if (r.dataPrevista && r.dataPrevista.startsWith(key) && !calcRec(r).done) (dueDay[r.dataPrevista] = dueDay[r.dataPrevista] || []).push(r); });
   const today = todayISO();
+  const occDia = {}, lemDia = {};
+  fixosDoMes(key).forEach(o => (occDia[o.iso] = occDia[o.iso] || []).push(o));
+  saldoLembretes(key).forEach(x => lemDia[x.iso] = x);
 
   let cells = '';
   for (let i=0;i<first;i++) cells += '<div class="day blank"></div>';
@@ -1706,17 +1820,19 @@ function vCal(){
     const iso = key + '-' + pad(d), ls = byDay[iso] || [];
     const net = ls.reduce((a,l) => a + lancBRL(l), 0);
     const hasIm = ls.some(l => l.imovelId), hasRc = ls.some(l => l.receberId), due = dueDay[iso];
-    cells += `<button class="day ${iso===today?'today':''} ${iso===cal.sel?'sel':''}" onclick="selDay('${iso}')">
+    const oc = occDia[iso] || [], lem = lemDia[iso];
+    const pend = oc.filter(o => !o.l && !o.rec), late = pend.some(o => o.st === 'late'), recP = oc.some(o => !o.l && o.rec), okAll = oc.length && oc.every(o => o.l);
+    cells += `<button class="day ${iso===today?'today':''} ${iso===cal.sel?'sel':''} ${pend.length ? (late ? 'due-late' : 'due') : ''}" onclick="selDay('${iso}')" title="${oc.map(o => esc(o.f.nome) + (o.l ? ' (feito)' : '')).join(', ')}${lem ? (oc.length ? ', ' : '') + 'Atualizar saldos' : ''}">
       <span class="dn">${d}</span>
-      ${ls.length ? `<span class="dv num ${net>=0?'pos':'neg'}">${net>=0?'+':''}${compact(net,'BRL').replace('R$ ','')}</span>` : ''}
-      <span class="dots">${hasIm?'<i class="bg-purple"></i>':''}${hasRc?'<i class="bg-teal"></i>':''}${due?'<i class="bg-orange"></i>':''}</span>
+      ${ls.length ? `<span class="dv num ${net>=0?'pos':'neg'}">${net>=0?'+':''}${compact(net,'BRL').replace('R$ ','')}</span>` : pend.length ? `<span class="dv dv-due">${pend.length > 1 ? pend.length + ' contas' : 'pagar'}</span>` : ''}
+      <span class="dots">${hasIm?'<i class="bg-purple"></i>':''}${hasRc?'<i class="bg-teal"></i>':''}${due?'<i class="bg-orange"></i>':''}${pend.length?'<i class="bg-coral"></i>':''}${recP?'<i class="bg-blue"></i>':''}${okAll && !hasIm && !hasRc ? '<i class="bg-teal"></i>' : ''}${lem && !lem.feito ? '<i class="bg-yellow"></i>' : ''}</span>
     </button>`;
   }
 
   let ent=0, sai=0, pim=0;
   monthL.forEach(l => { const v = lancBRL(l); if (v >= 0) ent += v; else sai += v; if (l.imovelId) pim += Math.abs(v); });
 
-  const selL = (byDay[cal.sel] || []).concat(S.lancamentos.filter(l => l.data === cal.sel && !l.data.startsWith(key)));
+  const selL = (byDay[cal.sel] || []).concat(S.lancamentos.filter(l => l.data === cal.sel && !l.data.startsWith(key))).filter(l => !(l.fixoId && (occDia[cal.sel] || []).some(o => o.l && o.l.id === l.id)));
   const selDue = S.receber.filter(r => r.dataPrevista === cal.sel && !calcRec(r).done);
 
   return `
@@ -1732,13 +1848,10 @@ function vCal(){
       <div class="legend" style="margin-top:14px">
         <span><i class="bg-purple" style="border-radius:50%"></i>Pagamento de imóvel</span>
         <span><i class="bg-teal" style="border-radius:50%"></i>Recebido</span>
-        <span><i class="bg-orange" style="border-radius:50%"></i>Previsão de recebimento</span>
-      </div>
-      <div class="msum">
-        <div><small class="dot-l teal">Entradas</small><b class="num">${money(ent)}</b></div>
-        <div><small class="dot-l coral">Saídas</small><b class="num">${money(sai)}</b></div>
-        <div><small class="dot-l purple">Em imóveis</small><b class="num">${money(pim)}</b></div>
-        <div class="bg-yellow"><small>Saldo do mês</small><b class="num">${money(ent+sai)}</b></div>
+        <span><i class="bg-coral" style="border-radius:50%"></i>Conta a pagar</span>
+        <span><i class="bg-blue" style="border-radius:50%"></i>Entrada prevista</span>
+        <span><i class="bg-orange" style="border-radius:50%"></i>Valor a receber</span>
+        ${(S.settings.saldoDias || []).length ? '<span><i class="bg-yellow" style="border-radius:50%"></i>Atualizar saldos</span>' : ''}
       </div>
     </div>
 
@@ -1746,13 +1859,18 @@ function vCal(){
       <div class="mhead bg-yellow"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Dia selecionado</small><h3>${fmtDate(cal.sel)}</h3></div>
         <button class="btn bg-paper" onclick="openLanc({data:'${cal.sel}'})">${ic('plus')}Lançar</button></div>
       <div class="mbody">
+        ${(lemDia[cal.sel] ? `<div class="li lem ${lemDia[cal.sel].feito ? 'feito' : ''}"><div class="dt dt-lem">${ic('bell')}</div><div class="main"><div class="t">Atualizar saldos dos bancos</div><div class="m">${lemDia[cal.sel].feito ? 'Feito, última atualização já cobre este dia' : 'Confira cada banco e atualize de uma vez'}</div></div>
+          ${lemDia[cal.sel].feito ? `<span class="chip bg-teal">${ic('check')}Feito</span>` : `<button class="btn sm bg-yellow" onclick="openAtualizarSaldos()">Atualizar</button>`}</div>` : '')}
+        ${(occDia[cal.sel] || []).length ? `<div class="list">${occDia[cal.sel].map(o => occItem(o)).join('')}</div>` : ''}
         ${selDue.map(r => `<div class="li"><div class="dt bg-orange"><b>!</b>prev.</div><div class="main"><div class="t">Previsto receber de ${esc(r.pessoa)}</div><div class="m">${esc(r.descricao||'')}</div></div>
           <button class="btn sm bg-teal" onclick="openLanc({data:'${cal.sel}',receberId:'${r.id}'})">Receber</button></div>`).join('')}
         ${selL.length ? `<div class="list">${selL.map(l => lancItem(l, true)).join('')}</div>`
-          : (selDue.length ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
+          : (selDue.length || (occDia[cal.sel] || []).length || lemDia[cal.sel] ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
       </div>
     </div>
   </div>
+
+  ${mesBloco(T)}
 
   <h3 class="sec">Lançamentos de ${MONTHS[m]}</h3>
   <div class="card pad">
@@ -1797,6 +1915,7 @@ function openLanc(o){
         <select id="lConta" onchange="lancHint()">${S.contas.map(c => `<option value="${c.id}" ${c.id===l.contaId?'selected':''}>${esc(c.nome)} (${c.moeda})</option>`).join('')}</select>
       </div>
       <div class="field"><label>Descrição</label><input id="lDesc" placeholder="opcional" value="${esc(l.desc)}"></div>
+      ${compField(l.comprovante || '')}
     </div>
     <div class="mfoot">
       ${ex ? `<button class="btn bg-pink" onclick="delLanc('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
@@ -1818,6 +1937,7 @@ function lancHint(){
     h.innerHTML += '<br><span class="tag" style="background:var(--yellow)">Histórico</span> Data até o saldo confirmado em ' + fmtDate(c.dataConfirmado) + ', então não desconta da conta de novo.';
 }
 function saveLanc(id){
+  if (compPending()) return;
   const op = $('#lOp').value;
   let v = parseNum($('#lVal').value);
   if (!v){ toast('Informe um valor'); return; }
@@ -1830,7 +1950,9 @@ function saveLanc(id){
   if (!desc && receberId) desc = 'Recebido de ' + S.receber.find(r => r.id === receberId).pessoa;
   const old = id ? S.lancamentos.find(l => l.id === id) : null;
   const obj = { id: id || uid('l'), data: $('#lData').value || todayISO(), valor: v, contaId: $('#lConta').value,
-                imovelId, receberId, desc, cotacao: old && old.cotacao ? old.cotacao : RATE, taxas: old && old.taxas ? old.taxas : Object.assign({}, RATES) };
+                imovelId, receberId, desc, cotacao: old && old.cotacao ? old.cotacao : RATE, taxas: old && old.taxas ? old.taxas : Object.assign({}, RATES),
+                comprovante: $('#cp_val') ? $('#cp_val').value : '' };
+  if (old && old.fixoId){ obj.fixoId = old.fixoId; obj.comp = old.comp; }
   if (old) Object.assign(old, obj); else S.lancamentos.push(obj);
   cal.sel = obj.data; cal.y = +obj.data.slice(0,4); cal.m = +obj.data.slice(5,7) - 1;
   closeModal(); commit();
@@ -1841,6 +1963,398 @@ function delLanc(id){
   S.lancamentos = S.lancamentos.filter(l => l.id !== id);
   closeModal(); commit();
 }
+
+/* ================== CONTAS DO MÊS ================== */
+/* Pagamentos e recebimentos que se repetem todo mês (parcelas, aluguel, invoices),
+   com lembrete no calendário, botão de pagar com comprovante e o balanço do mês */
+function diasNoMes(key){ const [y,m] = key.split('-').map(Number); return new Date(y, m, 0).getDate(); }
+function mesCurto(key){ const [y,m] = key.split('-'); return MON[+m-1] + '/' + y.slice(2); }
+function fixoAtivo(f, key){ return !f.pausado && (!f.inicio || key >= f.inicio) && (!f.fim || key <= f.fim); }
+function fixoLanc(f, key){ return S.lancamentos.find(l => l.fixoId === f.id && l.comp === key); }
+function contaPadrao(moeda){ return (S.contas.find(c => c.moeda === moeda) || S.contas.find(c => c.moeda === 'BRL') || S.contas[0] || {}).id || ''; }
+/* Valor previsto na moeda da conta fixa. Sem valor cadastrado, usa o último pago */
+function fixoValorPrev(f){
+  if (+f.valor) return +f.valor;
+  const ult = S.lancamentos.filter(l => l.fixoId === f.id || (f.imovelId && l.imovelId === f.imovelId)).sort((a,b) => a.data < b.data ? 1 : -1)[0];
+  return ult ? conv(Math.abs(+ult.valor), contaMoeda(ult), f.moeda || 'BRL', lancTaxas(ult)) : 0;
+}
+function fixosDoMes(key){
+  const hoje = todayISO(), dm = diasNoMes(key);
+  return (S.fixos || []).filter(f => fixoAtivo(f, key)).map(f => {
+    const dia = Math.min(+f.dia || 1, dm), iso = key + '-' + pad(dia), l = fixoLanc(f, key);
+    const prev = fixoValorPrev(f), moeda = f.moeda || 'BRL';
+    const dias = Math.round((new Date(iso + 'T12:00') - new Date(hoje + 'T12:00')) / 864e5);
+    const st = l ? 'ok' : dias < 0 ? 'late' : dias === 0 ? 'today' : dias <= 3 ? 'soon' : 'open';
+    return { f, key, dia, iso, l, prev, moeda, prevBRL: conv(prev, moeda, 'BRL'), feitoBRL: l ? Math.abs(lancBRL(l)) : 0, dias, st, rec: f.tipo === 'receber' };
+  }).sort((a,b) => a.dia - b.dia || (a.rec ? 1 : -1));
+}
+function balancoMes(key){
+  const L = S.lancamentos.filter(l => l.data.startsWith(key));
+  let ent = 0, sai = 0;
+  L.forEach(l => { const v = lancBRL(l); if (v >= 0) ent += v; else sai -= v; });
+  const occ = fixosDoMes(key);
+  const P = { prev:0, feito:0, falta:0, n:0, ok:0 }, R = { prev:0, feito:0, falta:0, n:0, ok:0 };
+  occ.forEach(o => { const X = o.rec ? R : P; X.n++; X.prev += o.prevBRL; if (o.l){ X.ok++; X.feito += o.feitoBRL; } else X.falta += o.prevBRL; });
+  return { key, ent, sai, res: ent - sai, occ, P, R, var: variacaoSaldo(key) };
+}
+/* Quanto o dinheiro em conta mudou no mês, pelos saldos atualizados (pega tudo, até o que não foi lançado) */
+function variacaoSaldo(key){
+  const sd = (S.saldos || []).filter(x => x.valores && Object.keys(x.valores).length).sort((a,b) => a.data < b.data ? -1 : 1);
+  const noMes = sd.filter(x => x.data.startsWith(key)), antes = sd.filter(x => x.data.slice(0,7) < key);
+  if (!noMes.length) return null;
+  const b = noMes[noMes.length - 1], a = antes.length ? antes[antes.length - 1] : (noMes.length > 1 ? noMes[0] : null);
+  if (!a) return null;
+  const hojeBRL = x => Object.keys(x.valores || {}).reduce((t,c) => t + conv(+x.valores[c] || 0, c, 'BRL'), 0);
+  return { de: a.data, ate: b.data, v: hojeBRL(b) - hojeBRL(a) };
+}
+/* Até quando o dinheiro em conta paga as contas fixas, sem contar outras entradas */
+function projecaoFixos(T){
+  const B = balancoMes(monthKey());
+  let saldo = T.liquidoBRL + B.R.falta - B.P.falta;
+  const prox = fixosDoMes(addMonths(1));
+  const pagMes = prox.filter(o => !o.rec).reduce((a,o) => a + o.prevBRL, 0), recMes = prox.filter(o => o.rec).reduce((a,o) => a + o.prevBRL, 0);
+  if (saldo < 0) return { sobraMes: saldo, ate: monthKey(), pagMes, recMes };
+  for (let i = 1; i <= 60; i++){
+    const occ = fixosDoMes(addMonths(i));
+    occ.forEach(o => saldo += o.rec ? o.prevBRL : -o.prevBRL);
+    if (saldo < 0) return { sobraMes: T.liquidoBRL + B.R.falta - B.P.falta, ate: addMonths(i), pagMes, recMes };
+  }
+  return { sobraMes: T.liquidoBRL + B.R.falta - B.P.falta, ate: null, pagMes, recMes };
+}
+const ST_TXT = { ok:'Pago', late:'Atrasado', today:'Vence hoje', soon:'Vence em breve', open:'Em aberto' };
+function stChip(o){
+  if (o.st === 'ok') return `<span class="chip bg-teal">${ic('check')}${o.rec ? 'Recebido' : 'Pago'}</span>`;
+  if (o.st === 'late') return `<span class="chip st-late">${o.rec ? 'Não recebido' : 'Atrasado'} ${-o.dias}d</span>`;
+  if (o.st === 'today') return `<span class="chip st-today">Vence hoje</span>`;
+  return `<span class="chip">${o.dias === 1 ? 'Amanhã' : 'em ' + o.dias + ' dias'}</span>`;
+}
+function occItem(o, compact){
+  const valor = o.l ? money(Math.abs(o.l.valor), contaMoeda(o.l)) : (o.prev ? money(o.prev, o.moeda) : 'definir valor');
+  const acao = o.l
+    ? (o.l.comprovante ? `<button class="btn sm icon" title="Ver comprovante" onclick="event.stopPropagation();verComp('${o.l.id}')">${ic('clip')}</button>` : '')
+    : `${compact ? '' : `<button class="btn sm icon" title="Editar valor e vencimento" onclick="event.stopPropagation();editFixo('${o.f.id}')">${ic('edit')}</button>`}<button class="btn sm ${o.rec ? 'bg-teal' : 'bg-yellow'}" onclick="event.stopPropagation();openPagarFixo('${o.f.id}','${o.key}')">${o.rec ? 'Receber' : 'Pagar'}</button>`;
+  const temValor = o.l || o.prev;
+  const vtxt = temValor ? (o.rec ? '+' : '') + valor : `<a href="#" class="def-val" onclick="event.preventDefault();event.stopPropagation();editFixo('${o.f.id}')">definir valor</a>`;
+  return `<div class="li occ click-li st-${o.st}" onclick="${o.l ? `openLanc({id:'${o.l.id}'})` : `openPagarFixo('${o.f.id}','${o.key}')`}">
+    <div class="dt ${o.rec ? 'dt-rec' : ''}"><b>${pad(o.dia)}</b>${MON[+o.key.slice(5)-1]}</div>
+    <div class="main"><div class="t">${esc(o.f.nome)}</div>
+      <div class="m">${compact ? stChip(o) : `${stChip(o)}${o.l ? ' <span class="muted">em ' + fmtDate(o.l.data) + '</span>' : ''}`}<span class="val-m num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</span></div></div>
+    <div class="val num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</div>
+    ${acao}
+  </div>`;
+}
+
+/* Cartão do mês no Dashboard: bem resumido */
+function mesCard(T){
+  const key = monthKey(), B = balancoMes(key), m = +key.slice(5) - 1;
+  const pend = B.occ.filter(o => !o.l).slice(0, 4);
+  const pctP = B.P.n ? B.P.ok / B.P.n * 100 : 0, semValor = B.occ.filter(o => !o.rec && !o.l && !o.prev).length;
+  const temFixos = (S.fixos || []).length;
+  return `<div class="card mes">
+    <div class="mes-h">
+      <div class="mes-t"><small>Balanço de ${MONTHS[m]}</small>
+        <b class="num ${B.res >= 0 ? 'pos' : 'neg'}">${B.res > 0 ? '+' : ''}${money(B.res)}</b>
+        <span>Entrou <b class="num pos">${money(B.ent)}</b> · Saiu <b class="num neg">${money(B.sai)}</b></span></div>
+      <div class="mes-act">
+        <button class="btn sm" onclick="openFixos()">${ic('edit')}Contas fixas</button>
+        <button class="btn sm" onclick="openAtualizarSaldos()">${ic('refresh')}Atualizar saldos</button>
+        <button class="btn sm bg-yellow" onclick="go('cal')">${ic('cal')}Ver o mês</button>
+      </div>
+    </div>
+    ${temFixos ? `
+    <div class="mes-prog">
+      <div class="row between"><span>${B.P.ok} de ${B.P.n} contas pagas</span><span class="num">${B.P.ok === B.P.n ? 'tudo pago \u{1F389}' : B.P.falta > 0 ? 'falta ' + money(B.P.falta) + (semValor ? ' + ' + semValor + ' sem valor' : '') : (B.P.n - B.P.ok) + ' sem valor definido'}</span></div>
+      <div class="bar-s"><i style="width:${PRIV() ? 0 : pctP}%"></i></div>
+    </div>
+    ${pend.length ? `<div class="list">${pend.map(o => occItem(o, true)).join('')}</div>` : '<div class="mes-ok">Todas as contas do mês estão em dia.</div>'}`
+    : `<div class="empty" style="margin-top:14px">Cadastre as contas que se repetem todo mês, como parcelas e aluguel, para receber o lembrete no calendário.<br><button class="btn sm bg-yellow" style="margin-top:12px" onclick="openFixos()">${ic('plus')}Cadastrar contas do mês</button></div>`}
+  </div>`;
+}
+
+/* Bloco completo do mês na aba Calendário */
+function mesBloco(T){
+  const key = cal.y + '-' + pad(cal.m + 1), B = balancoMes(key), atual = key === monthKey();
+  const pj = atual ? projecaoFixos(T) : null;
+  const pagar = B.occ.filter(o => !o.rec), receber = B.occ.filter(o => o.rec);
+  return `
+  <div class="grid mes-grid">
+    <div class="card pad">
+      <div class="row between" style="margin-bottom:6px;gap:8px"><b>Contas de ${MONTHS[cal.m]}</b>
+        <span class="row" style="gap:8px"><button class="btn sm" onclick="openFixos()">${ic('cog')}Contas fixas</button></span></div>
+      ${B.occ.length ? `
+        ${pagar.length ? `<div class="sub-h">A pagar <span class="num">${money(B.P.prev)}</span></div><div class="list">${pagar.map(o => occItem(o)).join('')}</div>` : ''}
+        ${receber.length ? `<div class="sub-h">A receber <span class="num pos">+${money(B.R.prev)}</span></div><div class="list">${receber.map(o => occItem(o)).join('')}</div>` : ''}`
+      : `<div class="empty">Nenhuma conta fixa neste mês.<br><button class="btn sm bg-yellow" style="margin-top:12px" onclick="openFixos()">${ic('plus')}Cadastrar contas do mês</button></div>`}
+    </div>
+    <div class="card pad bal">
+      <b>Balanço de ${MONTHS[cal.m]}</b>
+      <div class="bal-big">
+        <div><small class="dot-l teal">Entrou</small><b class="num pos">${money(B.ent)}</b></div>
+        <div><small class="dot-l coral">Saiu</small><b class="num neg">${money(B.sai)}</b></div>
+        <div class="bg-yellow"><small>Resultado</small><b class="num">${B.res > 0 ? '+' : ''}${money(B.res)}</b></div>
+      </div>
+      <div class="bal-rows">
+        ${B.occ.length ? `
+        <div class="kv"><span>Contas pagas</span><b class="num">${money(B.P.feito)} <small class="muted">de ${money(B.P.prev)}</small></b></div>
+        <div class="kv"><span>Falta pagar</span><b class="num ${B.P.falta > 0 ? 'neg' : ''}">${money(B.P.falta)}</b></div>
+        ${B.R.n ? `<div class="kv"><span>Falta receber</span><b class="num ${B.R.falta > 0 ? 'pos' : ''}">${money(B.R.falta)}</b></div>` : ''}` : ''}
+        ${B.var ? `<div class="kv"><span>Variação real do saldo <button class="info" title="Diferença entre a última atualização de saldos deste mês (${fmtDate(B.var.ate)}) e a anterior (${fmtDate(B.var.de)}), pela cotação de hoje. Pega tudo que entrou e saiu, até o que não foi lançado." onclick="toast(this.title)">i</button></span><b class="num ${B.var.v >= 0 ? 'pos' : 'neg'}">${B.var.v > 0 ? '+' : ''}${money(B.var.v)}</b></div>` : ''}
+      </div>
+      ${pj ? `<div class="bal-proj">
+        <div class="kv"><span>Em conta hoje</span><b class="num">${money(T.liquidoBRL)}</b></div>
+        <div class="kv"><span>Sobra prevista no fim do mês</span><b class="num ${pj.sobraMes >= 0 ? 'pos' : 'neg'}">${money(pj.sobraMes)}</b></div>
+        ${pj.pagMes ? `<p>${pj.recMes >= pj.pagMes
+          ? `As entradas fixas já cobrem as contas fixas. Sobram <b class="num">${money(pj.recMes - pj.pagMes)}</b> por mês.`
+          : `As contas fixas somam <b class="num">${money(pj.pagMes)}</b> por mês${pj.recMes ? ` e as entradas fixas <b class="num">${money(pj.recMes)}</b>` : ''}. ${pj.ate
+            ? `Sem outras entradas, o dinheiro em conta paga tudo até <b>${monthName(pj.ate)}</b>.`
+            : 'Sem outras entradas, o dinheiro em conta paga tudo por mais de 5 anos.'}`}</p>` : ''}
+        ${(S.fixos || []).some(f => !f.pausado && !+fixoValorPrev(f)) ? `<p class="bal-warn">${(S.fixos || []).filter(f => !f.pausado && !+fixoValorPrev(f)).length} contas ainda sem valor. A conta fica completa quando você preencher em <a href="#" onclick="event.preventDefault();openFixos()">Contas fixas</a>.</p>` : ''}
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+/* ---------- Pagar ou receber uma conta do mês ---------- */
+function openPagarFixo(fid, key){
+  const f = S.fixos.find(x => x.id === fid); if (!f) return;
+  const rec = f.tipo === 'receber', dm = diasNoMes(key), dia = Math.min(+f.dia || 1, dm), venc = key + '-' + pad(dia);
+  const contaId = (f.contaId && contaById(f.contaId)) ? f.contaId : contaPadrao(f.moeda || 'BRL');
+  const cm = (contaById(contaId) || {}).moeda || 'BRL';
+  const prev = conv(fixoValorPrev(f), f.moeda || 'BRL', cm);
+  const hoje = todayISO(), data = key < monthKey() ? venc : hoje;
+  openModal(`
+    <div class="mhead"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">${rec ? 'Receber' : 'Pagar'} · vence ${fmtDate(venc)}</small><h3>${esc(f.nome)}</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Valor ${rec ? 'recebido' : 'pago'}</label><input id="pf_val" inputmode="decimal" value="${fmtIn(Math.round(prev*100)/100)}" placeholder="0,00"></div>
+        <div class="field"><label>Data</label><input id="pf_data" type="date" value="${data}"></div>
+      </div>
+      <div class="field"><label>${rec ? 'Entrou na conta' : 'Saiu da conta'}</label>
+        <select id="pf_conta">${S.contas.map(c => `<option value="${c.id}" ${c.id===contaId?'selected':''}>${esc(c.nome)} (${c.moeda})</option>`).join('')}</select>
+        ${f.imovelId ? `<div class="hint">Conta como parcela paga em ${esc((S.imoveis.find(i => i.id === f.imovelId) || {}).nome || 'imóvel')}.</div>` : ''}
+      </div>
+      ${compField('')}
+      <div class="field"><label>Observação</label><input id="pf_obs" placeholder="opcional"></div>
+    </div>
+    <div class="mfoot"><button class="btn" style="margin-right:auto" onclick="editFixo('${f.id}')">${ic('edit')}Editar valor e vencimento</button><button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn ${rec ? 'bg-teal' : 'bg-yellow'}" onclick="salvarPagFixo('${f.id}','${key}')">${ic('check')}${rec ? 'Confirmar recebimento' : 'Confirmar pagamento'}</button></div>`);
+  setTimeout(() => { const i = $('#pf_val'); if (i){ i.focus(); i.select(); } }, 60);
+}
+function salvarPagFixo(fid, key){
+  if (compPending()) return;
+  const f = S.fixos.find(x => x.id === fid), rec = f.tipo === 'receber';
+  const v = Math.abs(parseNum($('#pf_val').value));
+  if (!v){ toast('Informe o valor'); return; }
+  const contaId = $('#pf_conta').value, obs = $('#pf_obs').value.trim();
+  const l = { id: uid('l'), data: $('#pf_data').value || todayISO(), valor: rec ? v : -v, contaId,
+    imovelId: rec ? '' : (f.imovelId || ''), receberId: '', desc: f.nome + ' · ' + MONTHS[+key.slice(5)-1] + (obs ? ' · ' + obs : ''),
+    fixoId: f.id, comp: key, comprovante: $('#cp_val').value || '', cotacao: RATE, taxas: Object.assign({}, RATES) };
+  if (!+f.valor){ f.valor = conv(v, (contaById(contaId) || {}).moeda || 'BRL', f.moeda || 'BRL'); }
+  S.lancamentos.push(l);
+  closeModal(); commit();
+  const B = balancoMes(key);
+  if (!rec && B.P.n && B.P.ok === B.P.n){ toast('Todas as contas de ' + MONTHS[+key.slice(5)-1] + ' pagas!'); confetti(70); }
+  else toast(rec ? 'Recebimento registrado' : 'Pagamento registrado');
+}
+
+/* ---------- Cadastro das contas fixas ---------- */
+function openFixos(){
+  const L = (S.fixos || []).slice().sort((a,b) => (a.tipo === b.tipo ? (+a.dia||0) - (+b.dia||0) : a.tipo === 'pagar' ? -1 : 1));
+  const row = f => `<div class="li click-li" onclick="editFixo('${f.id}')">
+      <div class="dt ${f.tipo === 'receber' ? 'dt-rec' : ''}"><b>${pad(+f.dia||1)}</b>dia</div>
+      <div class="main"><div class="t">${esc(f.nome)}</div><div class="m">${f.tipo === 'receber' ? 'A receber' : 'A pagar'}${f.inicio ? ' · desde ' + mesCurto(f.inicio) : ''}${f.fim ? ' · até ' + mesCurto(f.fim) : ''}${f.pausado ? ' · pausada' : ''}</div></div>
+      <div class="val num ${f.tipo === 'receber' ? 'pos' : ''} ${+fixoValorPrev(f) ? '' : 'muted'}">${+fixoValorPrev(f) ? money(fixoValorPrev(f), f.moeda || 'BRL') : 'sem valor'}</div></div>`;
+  const dias = (S.settings.saldoDias || []).join(' e ');
+  openModal(`
+    <div class="mhead"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Todo mês</small><h3>Contas fixas</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="hint" style="margin:0 0 12px">Parcelas, aluguel e entradas que se repetem. Toque em uma conta para mudar o valor, o dia do vencimento ou o nome. Cada uma aparece no calendário no dia do vencimento, com o botão de pagar e anexar o comprovante.</div>
+      ${L.length ? `<div class="list">${L.map(row).join('')}</div>` : '<div class="empty">Nenhuma conta fixa ainda.</div>'}
+      <div class="field" style="margin-top:18px"><label>Lembrete de atualizar saldos</label>
+        <input id="fx_sdias" placeholder="ex. 5, 20" value="${esc(dias)}"><div class="hint">Dias do mês em que você confere os saldos dos bancos. Aparecem no calendário como lembrete.</div></div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="saveSaldoDias();closeModal()">Fechar</button><button class="btn bg-yellow" onclick="saveSaldoDias();editFixo()">${ic('plus')}Nova conta fixa</button></div>`);
+}
+function saveSaldoDias(){
+  const el = $('#fx_sdias'); if (!el) return;
+  const d = String(el.value).split(/[^\d]+/).map(Number).filter(n => n >= 1 && n <= 31);
+  const novo = Array.from(new Set(d)).sort((a,b) => a - b);
+  if (JSON.stringify(novo) !== JSON.stringify(S.settings.saldoDias || [])){ S.settings.saldoDias = novo; commit(); }
+}
+function editFixo(id){
+  const ex = id ? S.fixos.find(f => f.id === id) : null;
+  const f = ex || { nome:'', tipo:'pagar', valor:0, moeda:'BRL', dia:10, contaId:'', imovelId:'', inicio: monthKey(), fim:'' };
+  const nPag = ex ? S.lancamentos.filter(l => l.fixoId === ex.id).length : 0;
+  openModal(`
+    <div class="mhead"><h3>${ex ? 'Editar conta fixa' : 'Nova conta fixa'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="g2">
+        <div class="field"><label>Nome</label><input id="fx_nome" value="${esc(f.nome)}" placeholder="ex. Parcela Studio Wave"></div>
+        <div class="field"><label>Tipo</label><select id="fx_tipo" onchange="$('#fxw_im').style.display=this.value==='pagar'?'':'none'">
+          <option value="pagar" ${f.tipo!=='receber'?'selected':''}>Pagar (parcela, conta)</option>
+          <option value="receber" ${f.tipo==='receber'?'selected':''}>Receber (aluguel, invoice)</option></select></div>
+        <div class="field"><label>Valor por mês</label><input id="fx_valor" inputmode="decimal" value="${fmtIn(f.valor)}" placeholder="vazio usa o último pago"></div>
+        <div class="field"><label>Moeda</label><select id="fx_moeda">${curOptions(f.moeda || 'BRL')}</select></div>
+        <div class="field"><label>Dia do vencimento</label><select id="fx_dia">${Array.from({length:31}, (_, i) => i + 1).map(d => `<option value="${d}" ${d === (+f.dia || 10) ? 'selected' : ''}>Dia ${d}</option>`).join('')}</select><div class="hint">Não sabe ainda? Deixe o dia 10 e troque depois.</div></div>
+        <div class="field"><label>Conta que costuma usar</label><select id="fx_conta"><option value="">Escolher na hora</option>${S.contas.map(c => `<option value="${c.id}" ${c.id===f.contaId?'selected':''}>${esc(c.nome)} (${c.moeda})</option>`).join('')}</select></div>
+        <div class="field"><label>Começa em</label><input id="fx_ini" type="month" value="${f.inicio || ''}" placeholder="2027-01"></div>
+        <div class="field"><label>Termina em (opcional)</label><input id="fx_fim" type="month" value="${f.fim || ''}" placeholder="vazio = sem fim"></div>
+      </div>
+      <div class="field" id="fxw_im" ${f.tipo==='receber'?'style="display:none"':''}><label>Imóvel ligado (opcional)</label>
+        <select id="fx_im"><option value="">Nenhum</option>${S.imoveis.map(i => `<option value="${i.id}" ${i.id===f.imovelId?'selected':''}>${esc(i.nome)}</option>`).join('')}</select>
+        <div class="hint">Cada pagamento entra como parcela paga nesse imóvel.</div></div>
+      ${ex ? `<label class="cur-opt" style="display:inline-flex"><input type="checkbox" id="fx_pausa" ${f.pausado?'checked':''}> Pausar esta conta</label>` : ''}
+      ${nPag ? `<div class="hint">${nPag} pagamento${nPag > 1 ? 's' : ''} já registrado${nPag > 1 ? 's' : ''}. Excluir a conta fixa mantém esses lançamentos.</div>` : ''}
+    </div>
+    <div class="mfoot">
+      ${ex ? `<button class="btn bg-pink" onclick="delFixo('${ex.id}')">${ic('trash')}Excluir</button>` : ''}
+      <button class="btn" onclick="openFixos()">Voltar</button>
+      <button class="btn bg-yellow" onclick="saveFixo('${ex ? ex.id : ''}')">Salvar</button>
+    </div>`);
+}
+function mesVal(s){ s = String(s || '').trim(); const m = s.match(/^(\d{4})-(\d{1,2})/) || s.match(/^(\d{1,2})\/(\d{4})$/); if (!m) return ''; return m[1].length === 4 ? m[1] + '-' + pad(+m[2]) : m[2] + '-' + pad(+m[1]); }
+function saveFixo(id){
+  const nome = $('#fx_nome').value.trim(); if (!nome){ toast('Dê um nome'); return; }
+  const dia = Math.min(31, Math.max(1, parseInt($('#fx_dia').value, 10) || 1));
+  const tipo = $('#fx_tipo').value;
+  const obj = { nome, tipo, valor: Math.abs(parseNum($('#fx_valor').value)), moeda: $('#fx_moeda').value, dia,
+    contaId: $('#fx_conta').value, imovelId: tipo === 'pagar' ? $('#fx_im').value : '', inicio: mesVal($('#fx_ini').value), fim: mesVal($('#fx_fim').value),
+    pausado: $('#fx_pausa') ? $('#fx_pausa').checked : false };
+  if (obj.fim && obj.inicio && obj.fim < obj.inicio){ toast('O fim precisa ser depois do começo'); return; }
+  S.fixos = S.fixos || [];
+  if (id) Object.assign(S.fixos.find(f => f.id === id), obj); else S.fixos.push(Object.assign({ id: uid('fx') }, obj));
+  commit(); openFixos(); toast('Conta fixa salva');
+}
+function delFixo(id){
+  if (!confirm('Excluir esta conta fixa? Os pagamentos já lançados continuam no histórico.')) return;
+  S.fixos = S.fixos.filter(f => f.id !== id); commit(); openFixos();
+}
+
+/* ---------- Atualizar todos os saldos de uma vez (dia 5 e dia 20) ---------- */
+function openAtualizarSaldos(){
+  openModal(`
+    <div class="mhead"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Conferir com o app do banco</small><h3>Atualizar saldos</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="field"><label>Data</label><input id="as_data" type="date" value="${todayISO()}"></div>
+      ${S.contas.map(c => `<div class="as-row"><span class="as-n"><i class="bg-${c.cor||'cream'}"></i>${esc(c.nome)}</span>
+        <div class="as-in"><span>${curSym(c.moeda)}</span><input id="as_${c.id}" inputmode="decimal" value="${fmtIn(Math.round(contaSaldo(c)*100)/100)}" onfocus="this.select()"></div></div>`).join('')}
+      <div class="hint">Digite o que aparece hoje em cada banco. Os lançamentos até essa data ficam só no histórico, sem descontar de novo, e o registro entra no gráfico de evolução.</div>
+    </div>
+    <div class="mfoot"><button class="btn" onclick="closeModal()">Cancelar</button><button class="btn bg-yellow" onclick="salvarSaldosTodos()">${ic('check')}Salvar saldos</button></div>`);
+}
+function salvarSaldosTodos(){
+  const data = $('#as_data').value || todayISO(), valores = {};
+  S.contas.forEach(c => {
+    const el = $('#as_' + c.id); if (!el) return;
+    const v = parseNum(el.value);
+    c.saldoConfirmado = v; c.dataConfirmado = data;
+    valores[c.moeda] = (valores[c.moeda] || 0) + v;
+  });
+  const taxas = {}; Object.keys(valores).forEach(m => { if (m !== 'BRL') taxas[m] = RATES[m] || 0; });
+  S.saldos = (S.saldos || []).filter(x => x.data !== data);
+  S.saldos.push({ id: uid('sd'), data, valores, taxas, auto: 1 });
+  closeModal(); commit(); toast('Saldos atualizados');
+  setTimeout(openSaldoWA, 250);
+}
+/* Lembretes de atualizar saldos que caem no mês */
+function saldoLembretes(key){
+  const dm = diasNoMes(key), hoje = todayISO();
+  const ultimaConf = S.contas.reduce((a,c) => c.dataConfirmado && c.dataConfirmado > a ? c.dataConfirmado : a, '');
+  return (S.settings.saldoDias || []).map(d => Math.min(d, dm)).map(d => {
+    const iso = key + '-' + pad(d);
+    return { iso, dia: d, feito: ultimaConf >= iso, passou: iso < hoje, hoje: iso === hoje };
+  });
+}
+
+/* ---------- Comprovante (foto ou PDF) ---------- */
+let COMP_UPLOADING = false;
+function compField(val){
+  return `<div class="field"><label>Comprovante</label>
+    <div class="comp-pick">
+      <input type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,application/pdf" id="cp_file" onchange="pickComp(this)" style="display:none">
+      <button type="button" class="btn sm bg-paper" onclick="$('#cp_file').click()">${ic('clip')}${val ? 'Trocar' : 'Anexar foto ou PDF'}</button>
+      <span class="comp-st" id="cp_st">${val ? `<a href="#" onclick="event.preventDefault();abrirComp($('#cp_val').value)">Ver comprovante</a> · <a href="#" onclick="event.preventDefault();$('#cp_val').value='';$('#cp_st').textContent='Removido'">remover</a>` : 'Opcional'}</span>
+      <input type="hidden" id="cp_val" value="${esc(val || '')}">
+    </div></div>`;
+}
+function compPending(){ if (COMP_UPLOADING){ toast('Aguarde o comprovante terminar de enviar'); return true; } return false; }
+function pickComp(inp){
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const st = $('#cp_st'), set = (v, txt) => { $('#cp_val').value = v; st.innerHTML = txt; };
+  const enviar = (data, fallback) => {
+    if (!GAS){ set(fallback || data, 'Anexado (modo de teste)'); return; }
+    COMP_UPLOADING = true; st.textContent = 'Enviando…';
+    google.script.run
+      .withSuccessHandler(url => { COMP_UPLOADING = false; set(url, `Salvo no Drive · <a href="#" onclick="event.preventDefault();abrirComp($('#cp_val').value)">ver</a>`); })
+      .withFailureHandler(err => {
+        COMP_UPLOADING = false;
+        if (fallback) set(fallback, 'O Drive não aceitou, então ficou salvo junto com os dados');
+        else set('', 'Não consegui enviar' + (err && err.message ? ' (' + err.message + ')' : '') + '. Tente uma foto.');
+      })
+      .uploadFoto(data, 'comprovante-' + f.name, TOKEN);
+  };
+  const r = new FileReader();
+  if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)){
+    if (f.size > 8e6){ toast('PDF muito grande, use um de até 8 MB'); return; }
+    r.onload = () => enviar(String(r.result).replace(/^data:[^;]*;/, 'data:application/pdf;'), null);
+    r.readAsDataURL(f); return;
+  }
+  r.onload = () => {
+    const img = new Image();
+    img.onerror = () => { st.textContent = 'Não consegui ler esse arquivo. Use JPG, PNG ou PDF.'; };
+    img.onload = () => enviar(shrinkImg(img, 1600, .82), shrinkImg(img, 900, .6));
+    img.src = r.result;
+  };
+  r.readAsDataURL(f);
+}
+function compLink(u){ const m = /[?&]id=([^&]+)/.exec(u || ''); return m ? 'https://drive.google.com/file/d/' + m[1] + '/view' : u; }
+function abrirComp(u){
+  if (!u) return;
+  if (/^data:image/.test(u)){
+    const w = window.open(''); if (w) w.document.write('<title>Comprovante</title><body style="margin:0;background:#111;display:grid;place-items:center;min-height:100vh"><img src="' + u + '" style="max-width:100%">');
+    return;
+  }
+  if (/^data:application\/pdf/.test(u)){ fetch(u).then(r => r.blob()).then(b => window.open(URL.createObjectURL(b), '_blank')); return; }
+  window.open(compLink(u), '_blank', 'noopener');
+}
+function verComp(lid){ const l = S.lancamentos.find(x => x.id === lid); if (l) abrirComp(l.comprovante); }
+
+/* ---------- Saldo das contas em texto para o WhatsApp ---------- */
+const FLAG_EMOJI = { BRL:'\u{1F1E7}\u{1F1F7}', USD:'\u{1F1FA}\u{1F1F8}', EUR:'\u{1F1EA}\u{1F1FA}', GBP:'\u{1F1EC}\u{1F1E7}', CAD:'\u{1F1E8}\u{1F1E6}', AUD:'\u{1F1E6}\u{1F1FA}', CHF:'\u{1F1E8}\u{1F1ED}', JPY:'\u{1F1EF}\u{1F1F5}', CNY:'\u{1F1E8}\u{1F1F3}', ARS:'\u{1F1E6}\u{1F1F7}', MXN:'\u{1F1F2}\u{1F1FD}', CLP:'\u{1F1E8}\u{1F1F1}', BTC:'\u{1FA99}' };
+const CUR_PT = { BRL:'Real', USD:'Dólar', EUR:'Euro', GBP:'Libra', CAD:'Dólar canadense', AUD:'Dólar australiano', CHF:'Franco suíço', JPY:'Iene', CNY:'Yuan', ARS:'Peso argentino', MXN:'Peso mexicano', CLP:'Peso chileno', BTC:'Bitcoin' };
+function saldoWAtxt(){
+  const tot = {};
+  S.contas.forEach(c => { const m = c.moeda || 'BRL'; tot[m] = (tot[m] || 0) + contaSaldo(c); });
+  const d = new Date(), data = pad(d.getDate()) + '/' + MON[d.getMonth()] + '/' + d.getFullYear();
+  const num = (v, m) => (v < 0 ? '−' : '') + Math.abs(v).toLocaleString('pt-BR', { minimumFractionDigits:0, maximumFractionDigits: m === 'BTC' ? 6 : 0 });
+  const linhas = CUR_KEYS.filter(k => tot[k] !== undefined).map(m => {
+    const v = num(tot[m], m), val = m === 'BRL' ? 'R$ ' + v : m === 'USD' ? v : curSym(m) + ' ' + v;
+    return (FLAG_EMOJI[m] || '') + ' ' + (CUR_PT[m] || m) + ' (' + m + '): ' + val;
+  });
+  return '\u{1F4CA} Saldo em ' + data + '\n\n' + linhas.join('\n');
+}
+function openSaldoWA(){
+  if (!S.contas.length){ toast('Cadastre uma conta primeiro'); return; }
+  const t = saldoWAtxt();
+  openModal(`
+    <div class="mhead"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Compartilhar</small><h3>Saldo no WhatsApp</h3></div>
+      <button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <div class="wa-prev">${esc(t).replace(/\n/g,'<br>')}</div>
+      <div class="hint">Cada linha soma todas as contas daquela moeda, com o saldo de hoje.</div>
+    </div>
+    <div class="mfoot">
+      <button class="btn" onclick="copiarSaldoWA()">${ic('share')}Copiar texto</button>
+      <button class="btn wa-btn" onclick="enviarSaldoWA()">${IC.wa}Enviar no WhatsApp</button>
+    </div>`);
+}
+function enviarSaldoWA(){ window.open('https://wa.me/?text=' + encodeURIComponent(saldoWAtxt()), '_blank'); }
+function copiarSaldoWA(){
+  const t = saldoWAtxt(), ok = () => toast('Texto copiado, é só colar no WhatsApp');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => fallbackCopy(t, ok));
+  else fallbackCopy(t, ok);
+}
+function fallbackCopy(t, ok){ const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); ok(); } catch(e){ toast('Não consegui copiar'); } a.remove(); }
 
 /* ---------- PATRIMÔNIO ---------- */
 function vPat(T){
@@ -2138,6 +2652,12 @@ function vWal(T){
   const h = MARKET.hist || [], first = h.length ? h[0].v : null, var30 = first ? (RATE/first - 1)*100 : null;
   const mens = (Math.pow(1 + cdiAA()/100, 1/12) - 1) * 100;
   return `
+  <div class="card wa-card">
+    <span class="wa-ic">${IC.wa}</span>
+    <div class="wa-t"><b>Saldo para compartilhar</b><span>Gera o resumo das contas pronto para mandar no WhatsApp</span></div>
+    <button class="btn sm" onclick="openAtualizarSaldos()">${ic('refresh')}Atualizar saldos</button>
+    <button class="btn wa-btn" onclick="openSaldoWA()">${IC.wa}Compartilhar no WhatsApp</button>
+  </div>
   <div class="grid g-wal">
     <div class="card fx">
       <div class="row between wrapr"><span class="kicker">${IC.spark} Dólar comercial</span>
@@ -2668,6 +3188,7 @@ function vSimple(T){
     <div class="card big-tile"><span class="strip bg-yellow"></span><small>Quanto falta</small><b class="num">${cv(Math.max(0, goalTotalBRL() - T.totalBRL))}</b></div>
     <div class="card big-tile"><span class="strip bg-teal"></span><small>Cresceu este mês</small><b class="num ${g < 0 ? 'neg' : ''}">${g > 0 ? '+' : ''}${cv(g)}</b></div>
   </div>
+  ${mesCard(T)}
   ${forecastCard(T)}
   ${got.length ? `<h3 class="sec">Últimas conquistas</h3><div class="grid g-ach">${got.map(achCard).join('')}</div>` : ''}
   <div style="text-align:center;margin-top:26px"><button class="btn" onclick="toggleSimple()">${ic('eye')}Ver sistema completo</button></div>`;
@@ -2884,6 +3405,7 @@ function vSob(){
       <div class="mbody sob-txt">
         <p>Organiza contas em ${CUR_KEYS.length} moedas, imóveis, parcelas, valores a receber e metas de patrimônio em um só lugar.</p>
         <p>Os valores são convertidos pela cotação do dia, o rendimento é estimado pelo CDI atual e o modo privado esconde todos os números com um toque.</p>
+        <p>As contas do mês aparecem no calendário no dia do vencimento, com o botão de pagar e anexar o comprovante, e o balanço mostra quanto entrou, quanto saiu e quanto ainda falta.</p>
       </div>
     </div>
     <div class="card">

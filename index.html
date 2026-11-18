@@ -607,6 +607,8 @@ body.locked .liquid,body.locked .void{display:none}
 @media (max-width:980px){.mes-full .mes-cols{grid-template-columns:1fr;gap:0}}
 .val-m{display:none;font-weight:700;font-size:12px}
 .tag-av{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:rgba(251,146,60,.12);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
+.btn.desfazer{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12px}
+.btn.desfazer:hover{color:#fff;border-color:rgba(255,255,255,.3)}
 .def-val{color:var(--shout);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .bal-warn{color:var(--orange)!important}
 .bal-warn a{color:var(--shout)}
@@ -752,7 +754,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.10.0';
+const VERSION = 'v3.10.1';
 const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -2075,7 +2077,7 @@ function occItem(o, compact){
   const editar = o.avulso ? `editRec('${o.r.id}')` : `editFixo('${o.f.id}')`;
   const valor = o.avulso && o.l ? money(o.prev, o.moeda) : o.l ? money(Math.abs(o.l.valor), contaMoeda(o.l)) : (o.prev ? money(o.prev, o.moeda) : 'definir valor');
   const acao = o.l
-    ? (o.l.comprovante ? `<button class="btn sm icon" title="Ver comprovante" onclick="event.stopPropagation();verComp('${o.l.id}')">${ic('clip')}</button>` : '')
+    ? `${o.l.comprovante ? `<button class="btn sm icon" title="Ver comprovante" onclick="event.stopPropagation();verComp('${o.l.id}')">${ic('clip')}</button>` : ''}${compact ? '' : `<button class="btn sm desfazer" title="${o.rec ? 'Voltar para a receber' : 'Voltar para a pagar'}" onclick="event.stopPropagation();desfazerOcc('${o.l.id}', ${o.rec ? 1 : 0})">${ic('refresh')}Desfazer</button>`}`
     : `${compact ? '' : `<button class="btn sm icon" title="Editar valor e data" onclick="event.stopPropagation();${editar}">${ic('edit')}</button>`}<button class="btn sm ${o.rec ? 'bg-teal' : 'bg-yellow'}" onclick="event.stopPropagation();${fazer}">${o.rec ? 'Receber' : 'Pagar'}</button>`;
   const temValor = o.l || o.prev;
   const vtxt = temValor ? (o.rec ? '+' : '') + valor : `<a href="#" class="def-val" onclick="event.preventDefault();event.stopPropagation();editFixo('${o.f.id}')">definir valor</a>`;
@@ -2086,6 +2088,15 @@ function occItem(o, compact){
     <div class="val num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</div>
     ${acao}
   </div>`;
+}
+
+/* Desmarca um pagamento ou recebimento: apaga o lançamento e a conta volta a ficar em aberto */
+function desfazerOcc(lid, rec){
+  const l = S.lancamentos.find(x => x.id === lid); if (!l) return;
+  const txt = (rec ? 'Voltar para a receber?' : 'Voltar para a pagar?') + '\n\nO lançamento de ' + money(Math.abs(l.valor), contaMoeda(l), true) + ' em ' + fmtDate(l.data) + ' será apagado' + (l.comprovante ? ', junto com o comprovante.' : '.');
+  if (!confirm(txt)) return;
+  S.lancamentos = S.lancamentos.filter(x => x.id !== lid);
+  commit(); toast(rec ? 'Voltou para a receber' : 'Voltou para a pagar');
 }
 
 /* Cartão do mês no Dashboard: bem resumido */

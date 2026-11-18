@@ -592,6 +592,19 @@ body.locked .liquid,body.locked .void{display:none}
 .chip.st-today{background:var(--shout);color:#000}
 .bal>b:first-child{display:block;margin-bottom:12px}
 .mes-grid>*{min-width:0}
+.ag-p{font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 16px}
+.ag-p b{color:#fff}
+.ag-link{display:flex;gap:8px;align-items:center}
+.ag-link input{flex:1;min-width:0;font-size:12px!important;color:var(--muted)}
+.ag-btns{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.ag-btns .btn{text-decoration:none}
+.ag-steps{display:flex;flex-direction:column;gap:4px;background:var(--deep);border-radius:18px;padding:14px 16px;font-size:13px;color:var(--muted);margin-bottom:12px}
+.ag-steps b{color:#fff;margin-bottom:4px}
+.cal-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.mes-full{margin-top:16px}
+.mes-full .mes-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.mes-cols>div{min-width:0}
+@media (max-width:980px){.mes-full .mes-cols{grid-template-columns:1fr;gap:0}}
 .val-m{display:none;font-weight:700;font-size:12px}
 .def-val{color:var(--shout);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .bal-warn{color:var(--orange)!important}
@@ -738,7 +751,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.8.3';
+const VERSION = 'v3.9.0';
 const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -1839,6 +1852,7 @@ function vCal(T){
 
   return `
   <div class="cal-wrap">
+    <div class="cal-side">
     <div class="card pad">
       <div class="cal-head">
         <button class="btn icon" onclick="calMove(-1)">${ic('left')}</button>
@@ -1856,7 +1870,10 @@ function vCal(T){
         ${(S.settings.saldoDias || []).length ? '<span><i class="bg-yellow" style="border-radius:50%"></i>Atualizar saldos</span>' : ''}
       </div>
     </div>
+    ${mesBloco(T, 'contas')}
+    </div>
 
+    <div class="cal-side">
     <div class="card">
       <div class="mhead bg-yellow"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Dia selecionado</small><h3>${fmtDate(cal.sel)}</h3></div>
         <button class="btn bg-paper" onclick="openLanc({data:'${cal.sel}'})">${ic('plus')}Lançar</button></div>
@@ -1870,9 +1887,9 @@ function vCal(T){
           : (selDue.length || (occDia[cal.sel] || []).length || lemDia[cal.sel] ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
       </div>
     </div>
+    ${mesBloco(T, 'bal')}
+    </div>
   </div>
-
-  ${mesBloco(T)}
 
   <h3 class="sec">Lançamentos de ${MONTHS[m]}</h3>
   <div class="card pad">
@@ -2075,20 +2092,20 @@ function mesCard(T){
 }
 
 /* Bloco completo do mês na aba Calendário */
-function mesBloco(T){
+function mesBloco(T, parte){
   const key = cal.y + '-' + pad(cal.m + 1), B = balancoMes(key), atual = key === monthKey();
   const pj = atual ? projecaoFixos(T) : null;
   const pagar = B.occ.filter(o => !o.rec), receber = B.occ.filter(o => o.rec);
-  return `
-  <div class="grid mes-grid">
-    <div class="card pad">
-      <div class="row between" style="margin-bottom:6px;gap:8px"><b>Contas de ${MONTHS[cal.m]}</b>
-        <span class="row" style="gap:8px"><button class="btn sm" onclick="openFixos()">${ic('cog')}Contas fixas</button></span></div>
-      ${B.occ.length ? `
-        ${pagar.length ? `<div class="sub-h">A pagar <span class="num">${money(B.P.prev)}</span></div><div class="list">${pagar.map(o => occItem(o)).join('')}</div>` : ''}
-        ${receber.length ? `<div class="sub-h">A receber <span class="num pos">+${money(B.R.prev)}</span></div><div class="list">${receber.map(o => occItem(o)).join('')}</div>` : ''}`
+  const contas = `
+    <div class="card pad mes-contas">
+      <div class="row between" style="margin-bottom:6px;gap:8px;flex-wrap:wrap"><b>Contas de ${MONTHS[cal.m]}</b>
+        <span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="openAgenda()">${ic('cal')}Sincronizar agenda</button><button class="btn sm" onclick="openFixos()">${ic('cog')}Contas fixas</button></span></div>
+      ${B.occ.length ? `<div class="mes-cols">
+        ${pagar.length ? `<div><div class="sub-h">A pagar <span class="num">${money(B.P.prev)}</span></div><div class="list">${pagar.map(o => occItem(o)).join('')}</div></div>` : ''}
+        ${receber.length ? `<div><div class="sub-h">A receber <span class="num pos">+${money(B.R.prev)}</span></div><div class="list">${receber.map(o => occItem(o)).join('')}</div></div>` : ''}</div>`
       : `<div class="empty">Nenhuma conta fixa neste mês.<br><button class="btn sm bg-yellow" style="margin-top:12px" onclick="openFixos()">${ic('plus')}Cadastrar contas do mês</button></div>`}
-    </div>
+    </div>`;
+  const bal = `
     <div class="card pad bal">
       <b>Balanço de ${MONTHS[cal.m]}</b>
       <div class="bal-big">
@@ -2114,8 +2131,8 @@ function mesBloco(T){
             : 'Sem outras entradas, o dinheiro em conta paga tudo por mais de 5 anos.'}`}</p>` : ''}
         ${(S.fixos || []).some(f => !f.pausado && !+fixoValorPrev(f)) ? `<p class="bal-warn">${(S.fixos || []).filter(f => !f.pausado && !+fixoValorPrev(f)).length} contas ainda sem valor. A conta fica completa quando você preencher em <a href="#" onclick="event.preventDefault();openFixos()">Contas fixas</a>.</p>` : ''}
       </div>` : ''}
-    </div>
-  </div>`;
+    </div>`;
+  return parte === 'contas' ? contas : parte === 'bal' ? bal : `<div class="grid mes-grid">${contas}${bal}</div>`;
 }
 
 /* ---------- Pagar ou receber uma conta do mês ---------- */
@@ -2327,6 +2344,36 @@ function abrirComp(u){
   window.open(compLink(u), '_blank', 'noopener');
 }
 function verComp(lid){ const l = S.lancamentos.find(x => x.id === lid); if (l) abrirComp(l.comprovante); }
+
+/* ---------- Agenda do celular: link de assinatura (Google Agenda, iPhone, Outlook) ---------- */
+function agendaUrl(){ return (S.settings.calKey && USUARIO && typeof API_URL !== 'undefined' && API_URL) ? API_URL + '?cal=' + encodeURIComponent(USUARIO + '.' + S.settings.calKey) : ''; }
+function novaChaveAgenda(){ const a = new Uint8Array(12); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach((_, i) => a[i] = Math.random() * 256); return Array.from(a, b => b.toString(16).padStart(2, '0')).join(''); }
+function openAgenda(){
+  if (!USUARIO || typeof API_URL === 'undefined' || !API_URL){ toast('A sincronização com a agenda funciona na versão online'); return; }
+  const url = agendaUrl(), webcal = url.replace(/^https:/, 'webcal:');
+  openModal(`
+    <div class="mhead"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Google Agenda, iPhone ou Outlook</small><h3>Sincronizar com a sua agenda</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mbody">
+      <p class="ag-p">Os vencimentos das contas fixas, os recebimentos previstos e os lembretes de atualizar saldos aparecem na sua agenda como eventos de dia inteiro. Tudo que você muda aqui vai junto, e quando você paga uma conta o evento passa a mostrar <b>Pago</b>.</p>
+      ${url ? `
+        <div class="field"><label>Link da sua agenda</label>
+          <div class="ag-link"><input id="agUrl" readonly value="${esc(url)}" onfocus="this.select()"><button class="btn sm" onclick="copiarAgenda()">${ic('share')}Copiar</button></div></div>
+        <div class="ag-btns">
+          <a class="btn bg-yellow" href="https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcal)}" target="_blank" rel="noopener">${ic('cal')}Adicionar no Google Agenda</a>
+          <a class="btn" href="${esc(webcal)}">${ic('cal')}iPhone ou Mac</a>
+        </div>
+        <div class="ag-steps"><b>Se preferir fazer à mão no Google Agenda</b>
+          <span>1. Copie o link acima.</span>
+          <span>2. No computador, abra o Google Agenda na conta certa e clique no + ao lado de Outras agendas.</span>
+          <span>3. Escolha Do URL, cole o link e clique em Adicionar agenda.</span></div>
+        <div class="hint">O Google confere esse link sozinho algumas vezes por dia, então uma mudança feita aqui pode levar algumas horas para aparecer lá. No iPhone dá para escolher atualizar a cada hora.</div>
+        <div class="hint">Quem tiver esse link consegue ver suas contas. Se ele vazar, gere um novo e o antigo para de funcionar.</div>`
+      : `<div class="empty">Crie o link uma vez e adicione na sua agenda. Depois disso ela se atualiza sozinha.<br><button class="btn bg-yellow" style="margin-top:14px" onclick="criarAgenda()">${ic('plus')}Criar link da agenda</button></div>`}
+    </div>
+    <div class="mfoot">${url ? `<button class="btn" style="margin-right:auto" onclick="if(confirm('Gerar um link novo? O link antigo para de funcionar e você vai precisar adicionar o novo na agenda.'))criarAgenda()">${ic('refresh')}Gerar link novo</button>` : ''}<button class="btn" onclick="closeModal()">Fechar</button></div>`);
+}
+function criarAgenda(){ S.settings.calKey = novaChaveAgenda(); commit(); openAgenda(); toast('Link criado. Ele fica pronto assim que salvar na planilha'); }
+function copiarAgenda(){ const t = agendaUrl(), ok = () => toast('Link copiado'); if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok).catch(() => fallbackCopy(t, ok)); else fallbackCopy(t, ok); }
 
 /* ---------- Saldo das contas em texto para o WhatsApp ---------- */
 const FLAG_EMOJI = { BRL:'\u{1F1E7}\u{1F1F7}', USD:'\u{1F1FA}\u{1F1F8}', EUR:'\u{1F1EA}\u{1F1FA}', GBP:'\u{1F1EC}\u{1F1E7}', CAD:'\u{1F1E8}\u{1F1E6}', AUD:'\u{1F1E6}\u{1F1FA}', CHF:'\u{1F1E8}\u{1F1ED}', JPY:'\u{1F1EF}\u{1F1F5}', CNY:'\u{1F1E8}\u{1F1F3}', ARS:'\u{1F1E6}\u{1F1F7}', MXN:'\u{1F1F2}\u{1F1FD}', CLP:'\u{1F1E8}\u{1F1F1}', BTC:'\u{1FA99}' };

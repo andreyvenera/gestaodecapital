@@ -606,6 +606,7 @@ body.locked .liquid,body.locked .void{display:none}
 .mes-cols>div{min-width:0}
 @media (max-width:980px){.mes-full .mes-cols{grid-template-columns:1fr;gap:0}}
 .val-m{display:none;font-weight:700;font-size:12px}
+.tag-av{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:rgba(251,146,60,.12);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
 .def-val{color:var(--shout);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .bal-warn{color:var(--orange)!important}
 .bal-warn a{color:var(--shout)}
@@ -751,7 +752,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.9.0';
+const VERSION = 'v3.10.0';
 const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -1702,13 +1703,14 @@ function animateHero(){
 /* ---------- ABAS ---------- */
 const TABS = [
   ['dash','Dashboard','chart'], ['cal','Calendário','cal'], ['pat','Patrimônio','home'],
-  ['rec','A Receber','gift'], ['wal','Wallet','wallet'], ['his','Nossa História','heart'],
+  ['wal','Wallet','wallet'], ['his','Nossa História','heart'],
   ['cfg','Ajustes','cog'], ['sob','Sobre','spark']
 ];
 function renderTabs(){
   $('#tabs').innerHTML = TABS.map(([k,t,i]) => `<button class="tab ${TAB===k?'on':''}" onclick="go('${k}')">${ic(i)}${t}</button>`).join('');
 }
 function go(k){
+  if (k === 'rec') k = 'cal';
   TAB = k; renderAll();
   /* mantém a página na altura das abas, sem voltar para o topo */
   const t = $('#tabs'); if (!t) return;
@@ -1798,7 +1800,7 @@ function vDash(T){
       ${recent.length ? `<div class="list">${recent.map(l => lancItem(l)).join('')}</div>` : '<div class="empty">Nenhum lançamento ainda. Use o calendário para começar.</div>'}
     </div>
     <div class="card pad">
-      <div class="row between" style="margin-bottom:6px;gap:8px"><b>Próximos recebimentos</b><span class="row" style="gap:8px"><button class="btn sm" onclick="go('rec')">Ver todos</button><button class="btn sm bg-teal" onclick="lancarRecebimento()">${ic('plus')}Receber</button></span></div>
+      <div class="row between" style="margin-bottom:6px;gap:8px"><b>Próximos recebimentos</b><span class="row" style="gap:8px"><button class="btn sm" onclick="go('cal')">Ver no calendário</button><button class="btn sm bg-teal" onclick="lancarRecebimento()">${ic('plus')}Receber</button></span></div>
       ${nextRec.length ? `<div class="list">${nextRec.map(r => { const k = calcRec(r); return `<div class="li click-li" onclick="openLanc({receberId:'${r.id}',data:todayISO()})" title="Registrar recebimento">
           <div class="dt">${r.dataPrevista ? '<b>'+r.dataPrevista.slice(8)+'</b>'+MON[+r.dataPrevista.slice(5,7)-1] : '<b>?</b>sem data'}</div>
           <div class="main"><div class="t">${esc(r.pessoa)}</div><div class="m">${esc(r.descricao||'')}</div></div>
@@ -1826,7 +1828,7 @@ function vCal(T){
   S.receber.forEach(r => { if (r.dataPrevista && r.dataPrevista.startsWith(key) && !calcRec(r).done) (dueDay[r.dataPrevista] = dueDay[r.dataPrevista] || []).push(r); });
   const today = todayISO();
   const occDia = {}, lemDia = {};
-  fixosDoMes(key).forEach(o => (occDia[o.iso] = occDia[o.iso] || []).push(o));
+  fixosDoMes(key).concat(avulsosDoMes(key).filter(o => o.iso.startsWith(key))).forEach(o => (occDia[o.iso] = occDia[o.iso] || []).push(o));
   saldoLembretes(key).forEach(x => lemDia[x.iso] = x);
 
   let cells = '';
@@ -1836,7 +1838,7 @@ function vCal(T){
     const net = ls.reduce((a,l) => a + lancBRL(l), 0);
     const hasIm = ls.some(l => l.imovelId), hasRc = ls.some(l => l.receberId), due = dueDay[iso];
     const oc = occDia[iso] || [], lem = lemDia[iso];
-    const pend = oc.filter(o => !o.l && !o.rec), late = pend.some(o => o.st === 'late'), recP = oc.some(o => !o.l && o.rec), okAll = oc.length && oc.every(o => o.l);
+    const pend = oc.filter(o => !o.l && !o.rec), late = pend.some(o => o.st === 'late'), recP = oc.some(o => !o.l && o.rec && !o.avulso), okAll = oc.length && oc.every(o => o.l);
     cells += `<button class="day ${iso===today?'today':''} ${iso===cal.sel?'sel':''} ${pend.length ? (late ? 'due-late' : 'due') : ''}" onclick="selDay('${iso}')" title="${oc.map(o => esc(o.f.nome) + (o.l ? ' (feito)' : '')).join(', ')}${lem ? (oc.length ? ', ' : '') + 'Atualizar saldos' : ''}">
       <span class="dn">${d}</span>
       ${ls.length ? `<span class="dv num ${net>=0?'pos':'neg'}">${net>=0?'+':''}${compact(net,'BRL').replace('R$ ','')}</span>` : pend.length ? `<span class="dv dv-due">${pend.length > 1 ? pend.length + ' contas' : 'pagar'}</span>` : ''}
@@ -1847,7 +1849,7 @@ function vCal(T){
   let ent=0, sai=0, pim=0;
   monthL.forEach(l => { const v = lancBRL(l); if (v >= 0) ent += v; else sai += v; if (l.imovelId) pim += Math.abs(v); });
 
-  const selL = (byDay[cal.sel] || []).concat(S.lancamentos.filter(l => l.data === cal.sel && !l.data.startsWith(key))).filter(l => !(l.fixoId && (occDia[cal.sel] || []).some(o => o.l && o.l.id === l.id)));
+  const selL = (byDay[cal.sel] || []).concat(S.lancamentos.filter(l => l.data === cal.sel && !l.data.startsWith(key))).filter(l => !((occDia[cal.sel] || []).some(o => o.l && o.l.id === l.id)));
   const selDue = S.receber.filter(r => r.dataPrevista === cal.sel && !calcRec(r).done);
 
   return `
@@ -1881,8 +1883,6 @@ function vCal(T){
         ${(lemDia[cal.sel] ? `<div class="li lem ${lemDia[cal.sel].feito ? 'feito' : ''}"><div class="dt dt-lem">${ic('bell')}</div><div class="main"><div class="t">Atualizar saldos dos bancos</div><div class="m">${lemDia[cal.sel].feito ? 'Feito, última atualização já cobre este dia' : 'Confira cada banco e atualize de uma vez'}</div></div>
           ${lemDia[cal.sel].feito ? `<span class="chip bg-teal">${ic('check')}Feito</span>` : `<button class="btn sm bg-yellow" onclick="openAtualizarSaldos()">Atualizar</button>`}</div>` : '')}
         ${(occDia[cal.sel] || []).length ? `<div class="list">${occDia[cal.sel].map(o => occItem(o)).join('')}</div>` : ''}
-        ${selDue.map(r => `<div class="li"><div class="dt bg-orange"><b>!</b>prev.</div><div class="main"><div class="t">Previsto receber de ${esc(r.pessoa)}</div><div class="m">${esc(r.descricao||'')}</div></div>
-          <button class="btn sm bg-teal" onclick="openLanc({data:'${cal.sel}',receberId:'${r.id}'})">Receber</button></div>`).join('')}
         ${selL.length ? `<div class="list">${selL.map(l => lancItem(l, true)).join('')}</div>`
           : (selDue.length || (occDia[cal.sel] || []).length || lemDia[cal.sel] ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
       </div>
@@ -1911,6 +1911,10 @@ function openLanc(o){
     imovelId: o.imovelId || '', receberId: o.receberId || '', desc:'' };
   const op = l.imovelId ? 'im:' + l.imovelId : l.receberId ? 'rc:' + l.receberId : 'livre';
   const pend = S.receber.filter(r => !calcRec(r).done || r.id === l.receberId);
+  if (!ex && l.receberId){
+    const r = S.receber.find(x => x.id === l.receberId);
+    if (r){ const m = r.moeda || 'BRL'; l.contaId = contaPadrao(m); const cm = (contaById(l.contaId) || {}).moeda || 'BRL'; l.valor = Math.round(conv(calcRec(r).pend, m, cm) * 100) / 100; }
+  }
   openModal(`
     <div class="mhead bg-yellow"><div><h3>${ex ? 'Editar lançamento' : 'Novo lançamento'}</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
     <div class="mbody">
@@ -1927,7 +1931,7 @@ function openLanc(o){
         <div class="hint" id="lHint"></div>
       </div>
       <div class="g2">
-        <div class="field"><label>Valor</label><input id="lVal" inputmode="decimal" placeholder="ex. −1500 ou 3000" value="${ex ? fmtIn(ex.valor) : ''}"></div>
+        <div class="field"><label>Valor</label><input id="lVal" inputmode="decimal" placeholder="ex. −1500 ou 3000" value="${ex ? fmtIn(ex.valor) : l.valor ? fmtIn(l.valor) : ''}"></div>
         <div class="field"><label>Data</label><input id="lData" type="date" value="${l.data}" onchange="lancHint()"></div>
       </div>
       <div class="field"><label>Conta</label>
@@ -2007,11 +2011,28 @@ function fixosDoMes(key){
     return { f, key, dia, iso, l, prev, moeda, prevBRL: conv(prev, moeda, 'BRL'), feitoBRL: l ? Math.abs(lancBRL(l)) : 0, dias, st, rec: f.tipo === 'receber' };
   }).sort((a,b) => a.dia - b.dia || (a.rec ? 1 : -1));
 }
+/* Valores a receber de uma vez só (empréstimos, reembolsos, pagamentos avulsos) */
+function avulsosDoMes(key){
+  const hoje = todayISO(), atual = key === monthKey(), dm = diasNoMes(key);
+  return (S.receber || []).map(r => {
+    const k = calcRec(r), m = r.moeda || 'BRL', dp = r.dataPrevista || '';
+    const doMes = dp ? dp.startsWith(key) : atual;
+    const deAntes = atual && !k.done && dp && dp.slice(0,7) < key;
+    if (!doMes && !deAntes) return null;
+    const iso = dp || '', dias = iso ? Math.round((new Date(iso + 'T12:00') - new Date(hoje + 'T12:00')) / 864e5) : 0;
+    const l = k.done ? k.pays.slice().sort((a,b) => a.data < b.data ? 1 : -1)[0] : null;
+    const prev = k.done ? (+r.valor || 0) : k.pend;
+    return { f: { id: r.id, nome: r.pessoa + (r.descricao ? ' · ' + r.descricao : ''), tipo: 'receber' }, avulso: true, r, key,
+      dia: !iso ? 99 : iso.slice(0,7) < key ? 0 : +iso.slice(8), diaTxt: iso ? iso.slice(8) : '?', mesTxt: iso ? MON[+iso.slice(5,7)-1] : 'sem data',
+      iso, l, prev, moeda: m, prevBRL: conv(prev, m, 'BRL'), feitoBRL: k.done ? conv(k.rec, m, 'BRL') : 0, parcial: !k.done && k.rec > 0 ? k.rec : 0,
+      dias, st: k.done ? 'ok' : !iso ? 'open' : dias < 0 ? 'late' : dias === 0 ? 'today' : dias <= 3 ? 'soon' : 'open', rec: true };
+  }).filter(Boolean);
+}
 function balancoMes(key){
   const L = S.lancamentos.filter(l => l.data.startsWith(key));
   let ent = 0, sai = 0;
   L.forEach(l => { const v = lancBRL(l); if (v >= 0) ent += v; else sai -= v; });
-  const occ = fixosDoMes(key);
+  const occ = fixosDoMes(key).concat(avulsosDoMes(key)).sort((a,b) => a.dia - b.dia || (a.rec ? 1 : -1));
   const P = { prev:0, feito:0, falta:0, n:0, ok:0 }, R = { prev:0, feito:0, falta:0, n:0, ok:0 };
   occ.forEach(o => { const X = o.rec ? R : P; X.n++; X.prev += o.prevBRL; if (o.l){ X.ok++; X.feito += o.feitoBRL; } else X.falta += o.prevBRL; });
   const entPrev = ent + R.falta, saiPrev = sai + P.falta;
@@ -2043,22 +2064,25 @@ function projecaoFixos(T){
 }
 const ST_TXT = { ok:'Pago', late:'Atrasado', today:'Vence hoje', soon:'Vence em breve', open:'Em aberto' };
 function stChip(o){
+  if (o.avulso && !o.iso && !o.l) return `<span class="chip">sem data</span>`;
   if (o.st === 'ok') return `<span class="chip bg-teal">${ic('check')}${o.rec ? 'Recebido' : 'Pago'}</span>`;
   if (o.st === 'late') return `<span class="chip st-late">${o.rec ? 'Não recebido' : 'Atrasado'} ${-o.dias}d</span>`;
   if (o.st === 'today') return `<span class="chip st-today">Vence hoje</span>`;
   return `<span class="chip">${o.dias === 1 ? 'Amanhã' : 'em ' + o.dias + ' dias'}</span>`;
 }
 function occItem(o, compact){
-  const valor = o.l ? money(Math.abs(o.l.valor), contaMoeda(o.l)) : (o.prev ? money(o.prev, o.moeda) : 'definir valor');
+  const fazer = o.avulso ? `openLanc({receberId:'${o.r.id}',data:todayISO()})` : `openPagarFixo('${o.f.id}','${o.key}')`;
+  const editar = o.avulso ? `editRec('${o.r.id}')` : `editFixo('${o.f.id}')`;
+  const valor = o.avulso && o.l ? money(o.prev, o.moeda) : o.l ? money(Math.abs(o.l.valor), contaMoeda(o.l)) : (o.prev ? money(o.prev, o.moeda) : 'definir valor');
   const acao = o.l
     ? (o.l.comprovante ? `<button class="btn sm icon" title="Ver comprovante" onclick="event.stopPropagation();verComp('${o.l.id}')">${ic('clip')}</button>` : '')
-    : `${compact ? '' : `<button class="btn sm icon" title="Editar valor e vencimento" onclick="event.stopPropagation();editFixo('${o.f.id}')">${ic('edit')}</button>`}<button class="btn sm ${o.rec ? 'bg-teal' : 'bg-yellow'}" onclick="event.stopPropagation();openPagarFixo('${o.f.id}','${o.key}')">${o.rec ? 'Receber' : 'Pagar'}</button>`;
+    : `${compact ? '' : `<button class="btn sm icon" title="Editar valor e data" onclick="event.stopPropagation();${editar}">${ic('edit')}</button>`}<button class="btn sm ${o.rec ? 'bg-teal' : 'bg-yellow'}" onclick="event.stopPropagation();${fazer}">${o.rec ? 'Receber' : 'Pagar'}</button>`;
   const temValor = o.l || o.prev;
   const vtxt = temValor ? (o.rec ? '+' : '') + valor : `<a href="#" class="def-val" onclick="event.preventDefault();event.stopPropagation();editFixo('${o.f.id}')">definir valor</a>`;
-  return `<div class="li occ click-li st-${o.st}" onclick="${o.l ? `openLanc({id:'${o.l.id}'})` : `openPagarFixo('${o.f.id}','${o.key}')`}">
-    <div class="dt ${o.rec ? 'dt-rec' : ''}"><b>${pad(o.dia)}</b>${MON[+o.key.slice(5)-1]}</div>
-    <div class="main"><div class="t">${esc(o.f.nome)}</div>
-      <div class="m">${compact ? stChip(o) : `${stChip(o)}${o.l ? ' <span class="muted">em ' + fmtDate(o.l.data) + '</span>' : ''}`}<span class="val-m num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</span></div></div>
+  return `<div class="li occ click-li st-${o.st} ${o.avulso ? 'avulso' : ''}" onclick="${o.l ? (o.avulso ? editar : `openLanc({id:'${o.l.id}'})`) : fazer}">
+    <div class="dt ${o.rec ? 'dt-rec' : ''}"><b>${o.diaTxt || pad(o.dia)}</b>${o.mesTxt || MON[+o.key.slice(5)-1]}</div>
+    <div class="main"><div class="t">${esc(o.f.nome)}${o.avulso ? ' <span class="tag-av">avulso</span>' : ''}</div>
+      <div class="m">${compact ? stChip(o) : `${stChip(o)}${o.l ? ' <span class="muted">em ' + fmtDate(o.l.data) + '</span>' : ''}${o.parcial ? ' <span class="muted">já recebeu ' + money(o.parcial, o.moeda) + '</span>' : ''}`}<span class="val-m num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</span></div></div>
     <div class="val num ${o.rec && temValor ? 'pos' : ''} ${temValor ? '' : 'muted'}">${vtxt}</div>
     ${acao}
   </div>`;
@@ -2099,7 +2123,7 @@ function mesBloco(T, parte){
   const contas = `
     <div class="card pad mes-contas">
       <div class="row between" style="margin-bottom:6px;gap:8px;flex-wrap:wrap"><b>Contas de ${MONTHS[cal.m]}</b>
-        <span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="openAgenda()">${ic('cal')}Sincronizar agenda</button><button class="btn sm" onclick="openFixos()">${ic('cog')}Contas fixas</button></span></div>
+        <span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn sm" onclick="openAgenda()">${ic('cal')}Sincronizar agenda</button><button class="btn sm" onclick="editRec()">${ic('plus')}Recebimento avulso</button><button class="btn sm" onclick="openFixos()">${ic('cog')}Contas fixas</button></span></div>
       ${B.occ.length ? `<div class="mes-cols">
         ${pagar.length ? `<div><div class="sub-h">A pagar <span class="num">${money(B.P.prev)}</span></div><div class="list">${pagar.map(o => occItem(o)).join('')}</div></div>` : ''}
         ${receber.length ? `<div><div class="sub-h">A receber <span class="num pos">+${money(B.R.prev)}</span></div><div class="list">${receber.map(o => occItem(o)).join('')}</div></div>` : ''}</div>`
@@ -2195,7 +2219,7 @@ function openFixos(){
       <button class="btn sm" style="margin-top:8px" onclick="saveSaldoDias();editFixo('','pagar')">${ic('plus')}Nova conta a pagar</button>
       <div class="sub-h" style="margin-top:22px">A receber</div>
       ${L.some(f => f.tipo === 'receber') ? `<div class="list">${L.filter(f => f.tipo === 'receber').map(row).join('')}</div>` : '<div class="hint">Nenhum recebimento fixo ainda.</div>'}
-      <button class="btn sm" style="margin-top:8px" onclick="saveSaldoDias();editFixo('','receber')">${ic('plus')}Novo recebimento fixo</button>
+      <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn sm" onclick="saveSaldoDias();editFixo('','receber')">${ic('plus')}Novo recebimento fixo</button><button class="btn sm" onclick="saveSaldoDias();editRec()">${ic('plus')}Recebimento avulso, uma vez só</button></div>
       <div class="field" style="margin-top:18px"><label>Lembrete de atualizar saldos</label>
         <input id="fx_sdias" placeholder="ex. 5, 20" value="${esc(dias)}"><div class="hint">Dias do mês em que você confere os saldos dos bancos. Aparecem no calendário como lembrete.</div></div>
     </div>
@@ -2448,7 +2472,9 @@ function vPat(T){
       </div>`;
     }).join('')}
     <div class="add-card" onclick="editImovel()"><div>${ic('plus','lg')}<div>Novo imóvel</div></div></div>
-  </div>`;
+  </div>
+  <h3 class="sec">Projeção total</h3>
+  ${projCard(T)}`;
 }
 function mapsUrl(a){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a||''); }
 function openImovel(id){
@@ -2645,6 +2671,20 @@ function vRec(T){
   ${ativos.length ? `<div class="grid g-ct">${ativos.map(card).join('')}</div>` : '<div class="empty">Nenhum valor pendente. Adicione empréstimos a familiares, vendas futuras ou qualquer recebimento previsto.</div>'}
   ${quit.length ? `<h3 class="sec">Quitados</h3><div class="grid g-ct">${quit.map(card).join('')}</div>` : ''}`;
 }
+function projCard(T){
+  const vw = S.settings.view;
+  return `
+  <div class="card proj">
+    <div class="proj-h"><span class="ibx bg-pink">${ic('eye')}</span><div><small>Projeção total</small><span class="muted">Se tudo for recebido e os imóveis vendidos pelo retorno esperado</span></div></div>
+    <div class="proj-rows">
+      <div class="kv"><span>Patrimônio total hoje</span><b class="num">${money(fromBRL(T.totalBRL, vw), vw)}</b></div>
+      <div class="kv"><span>Valores a receber</span><b class="num pos">+${money(fromBRL(T.receberBRL, vw), vw)}</b></div>
+      <div class="kv"><span>Retorno projetado dos imóveis</span><b class="num ${T.lucroBRL < 0 ? 'neg' : 'pos'}">${T.lucroBRL >= 0 ? '+' : ''}${money(fromBRL(T.lucroBRL, vw), vw)}</b></div>
+    </div>
+    <div class="proj-total"><span>Total projetado</span><div style="text-align:right"><b class="num">${money(fromBRL(T.futuroBRL, vw), vw)}</b><small class="num">${money(fromBRL(T.futuroBRL, vw === 'BRL' ? 'USD' : 'BRL'), vw === 'BRL' ? 'USD' : 'BRL')}</small></div></div>
+  </div>
+`;
+}
 function recNativo(cur){
   const n = S.receber.filter(r => !calcRec(r).done && (r.moeda || 'BRL') === cur).reduce((a,r) => a + calcRec(r).pend, 0);
   return n ? 'Pendente em ' + (CUR[cur] ? CUR[cur].n.toLowerCase() : cur) + ' ' + money(n, cur) : '';
@@ -2658,7 +2698,7 @@ function editRec(id){
   const ex = id ? S.receber.find(r => r.id === id) : null;
   const r = ex || { pessoa:'', descricao:'', valor:0, moeda:'BRL', dataPrevista:'' };
   openModal(`
-    <div class="mhead bg-orange"><h3>${ex ? 'Editar valor a receber' : 'Novo valor a receber'}</h3><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
+    <div class="mhead bg-orange"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Entra uma vez só</small><h3>${ex ? 'Editar recebimento avulso' : 'Recebimento avulso'}</h3></div><button class="btn icon bg-paper" onclick="closeModal()">${ic('close')}</button></div>
     <div class="mbody">
       <div class="g2">
         <div class="field"><label>De quem</label><input id="r_pessoa" value="${esc(r.pessoa)}" placeholder="Nome ou origem"></div>
@@ -2669,7 +2709,7 @@ function editRec(id){
         <div class="field"><label>Data prevista</label><input id="r_data" type="date" value="${r.dataPrevista||''}"></div>
         <div class="field"><label>Moeda</label><select id="r_moeda">${curOptions(r.moeda || 'BRL')}</select></div>
       </div>
-      <div class="hint">Cada recebimento lançado no calendário abate deste valor automaticamente.</div>
+      <div class="hint">Aparece no calendário na data prevista, com o botão Receber. Se entrar em partes, cada recebimento abate deste valor.</div>
     </div>
     <div class="mfoot">
       ${ex ? `<button class="btn bg-pink" onclick="delRec('${ex.id}')">${ic('trash')}Excluir</button>` : ''}

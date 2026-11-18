@@ -609,6 +609,13 @@ body.locked .liquid,body.locked .void{display:none}
 .tag-av{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);background:rgba(251,146,60,.12);padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:2px}
 .btn.desfazer{background:transparent;border:1px solid var(--line);color:var(--muted);font-size:12px}
 .btn.desfazer:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.day-tot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.day-tot div{background:var(--deep);border-radius:16px;padding:10px 12px;min-width:0}
+.day-tot small{display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.day-tot b{font-size:14px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.day-card{scroll-margin-top:12px}
+@media (max-width:980px){.cal-wrap>*,.cal-wrap .card{min-width:0;max-width:100%}.cal-wrap>.cal-side{display:contents}.cal-wrap .cal-card{order:1}.cal-wrap .day-card{order:2}.cal-wrap .mes-contas{order:3}.cal-wrap .bal{order:4}}
+.day-empty{font-size:13px;color:var(--muted);padding:12px 0}
 .def-val{color:var(--shout);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .bal-warn{color:var(--orange)!important}
 .bal-warn a{color:var(--shout)}
@@ -754,7 +761,7 @@ window.addEventListener('error', function(e){
 
 <script>
 /* ================== CONFIG ================== */
-const VERSION = 'v3.10.1';
+const VERSION = 'v3.10.2';
 const LAST_UPDATE = 'Novembro 2026';
 /* ================== SERVIDOR ================== */
 /* Cole entre as aspas a URL /exec do Apps Script para usar no GitHub Pages.
@@ -1857,7 +1864,7 @@ function vCal(T){
   return `
   <div class="cal-wrap">
     <div class="cal-side">
-    <div class="card pad">
+    <div class="card pad cal-card">
       <div class="cal-head">
         <button class="btn icon" onclick="calMove(-1)">${ic('left')}</button>
         <h2>${MONTHS[m]} ${y}</h2>
@@ -1878,15 +1885,26 @@ function vCal(T){
     </div>
 
     <div class="cal-side">
-    <div class="card">
+    <div class="card day-card">
       <div class="mhead bg-yellow"><div><small style="font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px">Dia selecionado</small><h3>${fmtDate(cal.sel)}</h3></div>
         <button class="btn bg-paper" onclick="openLanc({data:'${cal.sel}'})">${ic('plus')}Lançar</button></div>
       <div class="mbody">
         ${(lemDia[cal.sel] ? `<div class="li lem ${lemDia[cal.sel].feito ? 'feito' : ''}"><div class="dt dt-lem">${ic('bell')}</div><div class="main"><div class="t">Atualizar saldos dos bancos</div><div class="m">${lemDia[cal.sel].feito ? 'Feito, última atualização já cobre este dia' : 'Confira cada banco e atualize de uma vez'}</div></div>
           ${lemDia[cal.sel].feito ? `<span class="chip bg-teal">${ic('check')}Feito</span>` : `<button class="btn sm bg-yellow" onclick="openAtualizarSaldos()">Atualizar</button>`}</div>` : '')}
-        ${(occDia[cal.sel] || []).length ? `<div class="list">${occDia[cal.sel].map(o => occItem(o)).join('')}</div>` : ''}
-        ${selL.length ? `<div class="list">${selL.map(l => lancItem(l, true)).join('')}</div>`
-          : (selDue.length || (occDia[cal.sel] || []).length || lemDia[cal.sel] ? '' : '<div class="empty">Sem lançamentos neste dia.<br>Toque em Lançar para adicionar um recebimento, despesa ou parcela.</div>')}
+        ${(() => {
+          const dayL = S.lancamentos.filter(l => l.data === cal.sel).sort((a,b) => (+a.valor) - (+b.valor));
+          let dEnt = 0, dSai = 0; dayL.forEach(l => { const v = lancBRL(l); if (v >= 0) dEnt += v; else dSai -= v; });
+          const venc = (occDia[cal.sel] || []).filter(o => !(o.l && o.l.data === cal.sel));
+          return `
+          <div class="day-tot">
+            <div><small>Entrou</small><b class="num ${dEnt ? 'pos' : 'muted'}">${dEnt ? '+' : ''}${money(dEnt)}</b></div>
+            <div><small>Saiu</small><b class="num ${dSai ? 'neg' : 'muted'}">${dSai ? '−' : ''}${money(dSai)}</b></div>
+            <div><small>No dia</small><b class="num">${dEnt - dSai > 0 ? '+' : ''}${money(dEnt - dSai)}</b></div>
+          </div>
+          <div class="sub-h">Movimentado neste dia <span>${dayL.length ? dayL.length + (dayL.length > 1 ? ' lançamentos' : ' lançamento') : ''}</span></div>
+          ${dayL.length ? `<div class="list">${dayL.map(l => lancItem(l, true)).join('')}</div>` : '<div class="day-empty">Nada entrou ou saiu neste dia.</div>'}
+          ${venc.length ? `<div class="sub-h">Vence neste dia</div><div class="list">${venc.map(o => occItem(o)).join('')}</div>` : ''}`;
+        })()}
       </div>
     </div>
     ${mesBloco(T, 'bal')}
@@ -1898,7 +1916,10 @@ function vCal(T){
     ${monthL.length ? `<div class="list">${monthL.slice().sort((a,b)=>a.data<b.data?1:-1).map(l => lancItem(l, true)).join('')}</div>` : '<div class="empty">Nenhum lançamento neste mês.</div>'}
   </div>`;
 }
-function selDay(iso){ cal.sel = iso; renderAll(); }
+function selDay(iso){
+  cal.sel = iso; renderAll();
+  if (window.innerWidth < 980){ const el = document.querySelector('.day-card'); if (el) setTimeout(() => el.scrollIntoView({ behavior:'smooth', block:'start' }), 60); }
+}
 function calMove(d){
   cal.m += d;
   if (cal.m < 0){ cal.m = 11; cal.y--; } if (cal.m > 11){ cal.m = 0; cal.y++; }
